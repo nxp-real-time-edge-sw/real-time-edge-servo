@@ -6,6 +6,9 @@ obj=$(patsubst ./%.c, ./%.o, $(src))
 includedir = /usr/include/nservo
 libdir = /usr/lib
 execdir = /usr/bin
+PKG_CONFIG ?= /usr/bin/pkg-config
+HOME_DIR ?= /root
+
 console_tool_src=$(wildcard ./tool/console_tool.c)
 console_tool_obj=$(patsubst ./%.c, ./%.o, $(console_tool_src))
 
@@ -30,8 +33,8 @@ CFLAGS := $(shell DESTDIR=$(XENO_DESTDIR)   $(XENO_CONFIG) --skin=posix --cflags
 LDFLAGS := $(shell DESTDIR=${XENO_DESTDIR} $(XENO_CONFIG) --skin=posix --ldflags)
 endif
 
-CFLAGS +=  $(shell $(XML2_CONFIG) --cflags)
-LDFLAGS += $(shell $(XML2_CONFIG) --libs)
+CFLAGS +=  $(shell $(PKG_CONFIG) libxml-2.0 --cflags)
+LDFLAGS += $(shell $(PKG_CONFIG) libxml-2.0 --libs)
 
 CFLAGS += -I./include -Ddebug_level=debug_level_info
 LDFLAGS += -lpthread
@@ -56,15 +59,20 @@ nservo_client:  $(nservo_client_obj) lib
 	$(CC) $< -o nservo_client $(LDFLAGS)  
 
 install-libs:
-	-@if [ ! -d $(DESTDIR)$(includedir) ]; then mkdir -p $(DESTDIR)$(includedir); fi
-	cp include/* $(DESTDIR)$(includedir)
-	cp libnservo.a $(DESTDIR)$(libdir)
+	install -d -m 755 $(DESTDIR)$(includedir)
+	install -m 644 include/* $(DESTDIR)$(includedir)
+	install -d -m 755 $(DESTDIR)$(libdir)
+	install -m 644 libnservo.a $(DESTDIR)$(libdir)
 
 install:
-	cp nservo_run nservo_client nser_console_tool  $(DESTDIR)/$(execdir)
-	- mkdir $(DESTDIR)/root/nservo_example
-	cp ./example/hss248_ec_config_pp.xml  $(DESTDIR)/root/nservo_example
-	cp ./example/hss248_ec_config_pv.xml  $(DESTDIR)/root/nservo_example
+	install -d -m 755 $(DESTDIR)$(execdir)
+	install -d -m 755 $(DESTDIR)$(HOME_DIR)/nservo_example
+	install -m 755 nservo_run $(DESTDIR)$(execdir)
+	install -m 755 nservo_client $(DESTDIR)$(execdir)
+	install -m 755 nser_console_tool  $(DESTDIR)$(execdir)
+	install -m 664 example/hss248_ec_config_pp.xml  $(DESTDIR)$(HOME_DIR)/nservo_example
+	install -m 664 example/hss248_ec_config_pv.xml  $(DESTDIR)$(HOME_DIR)/nservo_example
+	install -m 664 example/x3e_config.xml  $(DESTDIR)$(HOME_DIR)/nservo_example
 
 clean:
 	rm *.o *.a
