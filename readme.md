@@ -41,8 +41,8 @@ the skeleton of XML config is shown as in figure below:
 	<slave_status_update_freq>#1</slave_status_update_freq>
 	<axle_status_update_freq>#1</axle_status_update_freq>
 	<sync_ref_update_freq>#2</sync_ref_update_freq>
-	<is_xenomai>#1</is_xenomai>
-	<sched_priority>#82</sched_priority>
+	<sched_priority>#90</sched_priority>
+	<sched_policy>SCHED_FIFO</sched_policy>
 	<Masters>
 		<Master>
 			...
@@ -73,8 +73,8 @@ the skeleton of XML config is shown as in figure below:
 * `<slave_status_update_freq>` element means the frequency of slaves status update. the value `#1` means  update the slaves status every task period. 
 *` <axle_status_update_freq>` element means the frequency of axles status update. the value `#1`means  update the axles status every task period. 
 * `<sync_ref_update_freq>` element means the frequency of reference clock update. the value `#2`means  update the axles status every two task period.
-* `<is_xenomai>` element means whether Xenomai is supported.   the value `#1` means that Xenomai is supported on this host, and `#0` means not.
 * `<sched_priority>` element means the priority of the user task.
+* `<sched_policy>` element means the scheduling policy of the user task.
 * `<Masters>` element could contain more then one `Master` element .  For most cases, there is only one master on a host. 
 * `<Axles>` element could contain more then one Axle element, which is the developer really care about.
 

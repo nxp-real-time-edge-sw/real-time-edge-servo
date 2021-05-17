@@ -4,6 +4,8 @@
  */
 
 #include <stdio.h>
+#include <sched.h>
+#include <string.h>
 #include <libxml2/libxml/xmlreader.h>
 #include <libxml2/libxml/parser.h>
 #include <libxml2/libxml/tree.h>
@@ -861,12 +863,6 @@ static int xml_config_global_data(nser_global_data *ns_data,
 		ns_data->period_time = (uint32_t) ret;
 	}
 
-	ret = get_subnode_value(root_element, "is_xenomai");
-	if (ret < 0) {
-		ns_data->is_xenomai = 0;
-	} else
-		ns_data->is_xenomai = (int) ret;
-
 	ret = get_subnode_value(root_element, "master_status_update_freq");
 	if (ret < 0) {
 		ns_data->master_status_update_freq = 1000;
@@ -896,6 +892,18 @@ static int xml_config_global_data(nser_global_data *ns_data,
 		ns_data->sched_priority = 82;
 	} else
 		ns_data->sched_priority = (int) ret;
+
+	char *policy = get_subnode_value_str(root_element, "sched_policy");
+	if (!policy) {
+		ns_data->sched_policy = SCHED_OTHER;
+	} else if ( !strncmp(policy, "SCHED_FIFO", 10)) {
+		ns_data->sched_policy = SCHED_FIFO;
+	} else if ( !strncmp(policy, "SCHED_RR", 8)) {
+		ns_data->sched_policy = SCHED_RR;
+	}else {
+		debug_error("Unknown sched_policy: %s\n", policy);
+		return -1;
+	}
 
 	if ((xml_create_new_master(root_element, ns_data))) {
 		debug_error("Failed to creat new master\n");

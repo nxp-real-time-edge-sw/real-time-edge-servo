@@ -164,8 +164,8 @@ struct _nser_global_data {
 	unsigned int axle_number;
 	uint32_t period_time;
 	pthread_t cyclic_thread;
-	int is_xenomai;
 	int sched_priority;
+	int sched_policy;
 	int running;
 	nser_cycle_task_t task;
 	void *private_data;
@@ -178,8 +178,6 @@ struct _nser_global_data {
 };
 
 #define nser_set_sched_priority(ns_data, data)				 ns_data->sched_priority = (data)
-#define nser_clear__xenomai(ns_data)						ns_data->is_xenomai = 0
-#define nser_set_xenomai(ns_data)							ns_data->is_xenomai = 1
 #define nser_set_master_status_update_freq(ns_data, data)	 ns_data->master_status_update_freq = (data)
 #define nser_set_slave_status_update_freq(ns_data, data) 	ns_data->slave_status_update_freq = (data)
 #define nser_set_axle_status_update_freq(ns_data, data) 	ns_data->axle_status_update_freq = (data)
