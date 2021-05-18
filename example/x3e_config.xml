@@ -1,0 +1,1576 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	SPDX-License-Identifier: (GPL-2.0 OR MIT)
+	Copyright 2018-2020 NXP
+-->
+
+<Config  Version="1.2">
+	<PeriodTime>#500000</PeriodTime>
+	<MaxSafeStack>#8192</MaxSafeStack>
+	<master_status_update_freq>#4</master_status_update_freq>
+	<slave_status_update_freq>#4</slave_status_update_freq>
+	<axle_status_update_freq>#4</axle_status_update_freq>
+	<sync_ref_update_freq>#1</sync_ref_update_freq>
+	<sched_priority>#90</sched_priority>
+	<sched_policy>#SCHED_FIFO</sched_policy>
+	<Masters>
+		<Master>
+			<Master_index>#0</Master_index>
+			<Reference_clock>#0</Reference_clock>
+			<Slave  alias="#0" slave_position="#0">
+				<VendorId>#x000116c7</VendorId>
+				<ProductCode>#x003e0402</ProductCode>
+				<Name>X3E</Name>
+				<Emerg_size>#x08</Emerg_size>
+				<WatchDog>
+					<Divider>#x0</Divider>
+					<Intervals>#4000</Intervals>
+				</WatchDog>
+				<DC>
+					<SYNC SubIndex='#0'>
+						<Shift>#0</Shift>
+					</SYNC>
+				</DC>
+				<SyncManagers force_pdo_assign="#1">
+					<SyncManager SubIndex="#0">
+						<Index>#x1c10</Index>
+						<Name>Sync Manager 0 PDO Assignment</Name>
+						<Dir>OUTPUT</Dir>
+						<Watchdog>DISABLE</Watchdog>
+						<PdoNum>#0</PdoNum>
+					</SyncManager>
+
+					<SyncManager SubIndex="#1">
+						<Index>#x1c11</Index>
+						<Name>Sync Manager 1 PDO Assignment</Name>
+						<Dir>INPUT</Dir>
+						<Watchdog>DISABLE</Watchdog>
+						<PdoNum>#0</PdoNum>
+					</SyncManager>
+
+					<SyncManager SubIndex="#2">
+						<Index>#x1c12</Index>
+						<Name>Sync Manager 2 PDO Assignment</Name>
+						<Dir>OUTPUT</Dir>
+						<Watchdog>ENABLE</Watchdog>
+						<PdoNum>#1</PdoNum>
+						<Pdo SubIndex="#1">
+							<Index>#x1600</Index>
+							<Name>RxPdo 1</Name>
+							<Entry SubIndex="#1">
+								<Index>#x6040</Index>
+								<SubIndex>#x0</SubIndex>
+								<DataType>UINT</DataType>
+								<BitLen>#16</BitLen>
+								<Name>controlword</Name>
+							</Entry>
+							<Entry SubIndex="#2">
+								<Index>#x6060</Index>
+								<SubIndex>#x0</SubIndex>
+								<DataType>SINT</DataType>
+								<BitLen>#8</BitLen>
+								<Name>op_mode</Name>
+							</Entry>
+							<Entry SubIndex="#3">
+								<Index>#x607a</Index>
+								<SubIndex>#x0</SubIndex>
+								<BitLen>#32</BitLen>
+								<DataType>DUINT</DataType>
+								<Name>Target position</Name>
+							</Entry>
+							<Entry SubIndex="#4">
+								<Index>#x60ff</Index>
+								<SubIndex>#x0</SubIndex>
+								<BitLen>#32</BitLen>
+								<DataType>DUINT</DataType>
+								<Name>Target velocity</Name>
+							</Entry>
+
+							<Entry SubIndex="#5">
+								<Index>#x6081</Index>
+								<SubIndex>#x0</SubIndex>
+								<BitLen>#32</BitLen>
+								<DataType>DINT</DataType>
+								<Name>profile Velocity</Name>
+							</Entry>
+						</Pdo>
+					</SyncManager>
+					<SyncManager SubIndex="#3">
+						<Index>#x1c13</Index>
+						<Name>Sync Manager 3 PDO Assignment</Name>
+						<Dir>INPUT</Dir>
+						<Watchdog>DISABLE</Watchdog>
+						<PdoNum>#1</PdoNum>
+						<Pdo SubIndex="#1">
+							<Index>#x1a00</Index>
+							<Name>TxPdo 1</Name>
+							<Entry SubIndex="#1">
+								<Index>#x6041</Index>
+								<SubIndex>#x0</SubIndex>
+								<DataType>UINT</DataType>
+								<BitLen>#16</BitLen>
+								<Name>statusword</Name>
+							</Entry>
+							<Entry SubIndex="#2">
+								<Index>#x6061</Index>
+								<SubIndex>#x0</SubIndex>
+								<DataType>SINT</DataType>
+								<BitLen>#8</BitLen>
+								<Name>op_mode_display</Name>
+							</Entry>
+							<Entry SubIndex="#3">
+								<Index>#x6064</Index>
+								<SubIndex>#x0</SubIndex>
+								<BitLen>#32</BitLen>
+								<DataType>DUINT</DataType>
+								<Name>actual_position</Name>
+							</Entry>
+							<Entry SubIndex="#4">
+								<Index>#x606c</Index>
+								<SubIndex>#x0</SubIndex>
+								<BitLen>#32</BitLen>
+								<DataType>INT</DataType>
+								<Name>actual_velocity</Name>
+							</Entry>
+							</Pdo>
+						</SyncManager>
+					</SyncManagers>
+				<Sdos>
+					<Sdo>
+						<Index>#x6083</Index>
+						<Subindex>#x0</Subindex>
+						<value>#x40000</value>
+						<BitLen>#32</BitLen>
+						<DataType>DINT</DataType>
+						<Name>Profile_acceleration</Name>
+					</Sdo>
+					<Sdo>
+						<Index>#x6084</Index>
+						<Subindex>#x0</Subindex>
+						<value>#x40000</value>
+						<BitLen>#32</BitLen>
+						<DataType>DINT</DataType>
+						<Name>Profile_deceleration</Name>
+					</Sdo>
+					<Sdo>
+						<Index>#x6085</Index>
+						<Subindex>#x0</Subindex>
+						<value>#x40000</value>
+						<BitLen>#32</BitLen>
+						<DataType>DINT</DataType>
+						<Name>Quick_stop_deceleration</Name>
+					</Sdo>
+				</Sdos>
+			</Slave>
+			<Slave  alias="#0" slave_position="#1">
+				<VendorId>#x000116c7</VendorId>
+				<ProductCode>#x003e0402</ProductCode>
+				<Name>X3E</Name>
+				<Emerg_size>#x08</Emerg_size>
+				<WatchDog>
+					<Divider>#x0</Divider>
+					<Intervals>#4000</Intervals>
+				</WatchDog>
+				<DC>
+					<SYNC SubIndex='#0'>
+						<Shift>#0</Shift>
+					</SYNC>
+				</DC>
+				<SyncManagers force_pdo_assign="#1">
+					<SyncManager SubIndex="#0">
+						<Index>#x1c10</Index>
+						<Name>Sync Manager 0 PDO Assignment</Name>
+						<Dir>OUTPUT</Dir>
+						<Watchdog>DISABLE</Watchdog>
+						<PdoNum>#0</PdoNum>
+					</SyncManager>
+
+					<SyncManager SubIndex="#1">
+						<Index>#x1c11</Index>
+						<Name>Sync Manager 1 PDO Assignment</Name>
+						<Dir>INPUT</Dir>
+						<Watchdog>DISABLE</Watchdog>
+						<PdoNum>#0</PdoNum>
+					</SyncManager>
+
+					<SyncManager SubIndex="#2">
+						<Index>#x1c12</Index>
+						<Name>Sync Manager 2 PDO Assignment</Name>
+						<Dir>OUTPUT</Dir>
+						<Watchdog>ENABLE</Watchdog>
+						<PdoNum>#1</PdoNum>
+						<Pdo SubIndex="#1">
+							<Index>#x1600</Index>
+							<Name>RxPdo 1</Name>
+							<Entry SubIndex="#1">
+								<Index>#x6040</Index>
+								<SubIndex>#x0</SubIndex>
+								<DataType>UINT</DataType>
+								<BitLen>#16</BitLen>
+								<Name>controlword</Name>
+							</Entry>
+							<Entry SubIndex="#2">
+								<Index>#x6060</Index>
+								<SubIndex>#x0</SubIndex>
+								<DataType>SINT</DataType>
+								<BitLen>#8</BitLen>
+								<Name>op_mode</Name>
+							</Entry>
+							<Entry SubIndex="#3">
+								<Index>#x607a</Index>
+								<SubIndex>#x0</SubIndex>
+								<BitLen>#32</BitLen>
+								<DataType>DUINT</DataType>
+								<Name>Target position</Name>
+							</Entry>
+							<Entry SubIndex="#4">
+								<Index>#x60ff</Index>
+								<SubIndex>#x0</SubIndex>
+								<BitLen>#32</BitLen>
+								<DataType>DUINT</DataType>
+								<Name>Target velocity</Name>
+							</Entry>
+
+							<Entry SubIndex="#5">
+								<Index>#x6081</Index>
+								<SubIndex>#x0</SubIndex>
+								<BitLen>#32</BitLen>
+								<DataType>DINT</DataType>
+								<Name>profile Velocity</Name>
+							</Entry>
+						</Pdo>
+					</SyncManager>
+					<SyncManager SubIndex="#3">
+						<Index>#x1c13</Index>
+						<Name>Sync Manager 3 PDO Assignment</Name>
+						<Dir>INPUT</Dir>
+						<Watchdog>DISABLE</Watchdog>
+						<PdoNum>#1</PdoNum>
+						<Pdo SubIndex="#1">
+							<Index>#x1a00</Index>
+							<Name>TxPdo 1</Name>
+							<Entry SubIndex="#1">
+								<Index>#x6041</Index>
+								<SubIndex>#x0</SubIndex>
+								<DataType>UINT</DataType>
+								<BitLen>#16</BitLen>
+								<Name>statusword</Name>
+							</Entry>
+							<Entry SubIndex="#2">
+								<Index>#x6061</Index>
+								<SubIndex>#x0</SubIndex>
+								<DataType>SINT</DataType>
+								<BitLen>#8</BitLen>
+								<Name>op_mode_display</Name>
+							</Entry>
+							<Entry SubIndex="#3">
+								<Index>#x6064</Index>
+								<SubIndex>#x0</SubIndex>
+								<BitLen>#32</BitLen>
+								<DataType>DUINT</DataType>
+								<Name>actual_position</Name>
+							</Entry>
+							<Entry SubIndex="#4">
+								<Index>#x606c</Index>
+								<SubIndex>#x0</SubIndex>
+								<BitLen>#32</BitLen>
+								<DataType>INT</DataType>
+								<Name>actual_velocity</Name>
+							</Entry>
+							</Pdo>
+						</SyncManager>
+					</SyncManagers>
+				<Sdos>
+					<Sdo>
+						<Index>#x6083</Index>
+						<Subindex>#x0</Subindex>
+						<value>#x40000</value>
+						<BitLen>#32</BitLen>
+						<DataType>DINT</DataType>
+						<Name>Profile_acceleration</Name>
+					</Sdo>
+					<Sdo>
+						<Index>#x6084</Index>
+						<Subindex>#x0</Subindex>
+						<value>#x40000</value>
+						<BitLen>#32</BitLen>
+						<DataType>DINT</DataType>
+						<Name>Profile_deceleration</Name>
+					</Sdo>
+					<Sdo>
+						<Index>#x6085</Index>
+						<Subindex>#x0</Subindex>
+						<value>#x40000</value>
+						<BitLen>#32</BitLen>
+						<DataType>DINT</DataType>
+						<Name>Quick_stop_deceleration</Name>
+					</Sdo>
+				</Sdos>
+			</Slave>
+			<Slave  alias="#0" slave_position="#2">
+				<VendorId>#x000116c7</VendorId>
+				<ProductCode>#x003e0402</ProductCode>
+				<Name>X3E</Name>
+				<Emerg_size>#x08</Emerg_size>
+				<WatchDog>
+					<Divider>#x0</Divider>
+					<Intervals>#4000</Intervals>
+				</WatchDog>
+				<DC>
+					<SYNC SubIndex='#0'>
+						<Shift>#0</Shift>
+					</SYNC>
+				</DC>
+				<SyncManagers force_pdo_assign="#1">
+					<SyncManager SubIndex="#0">
+						<Index>#x1c10</Index>
+						<Name>Sync Manager 0 PDO Assignment</Name>
+						<Dir>OUTPUT</Dir>
+						<Watchdog>DISABLE</Watchdog>
+						<PdoNum>#0</PdoNum>
+					</SyncManager>
+
+					<SyncManager SubIndex="#1">
+						<Index>#x1c11</Index>
+						<Name>Sync Manager 1 PDO Assignment</Name>
+						<Dir>INPUT</Dir>
+						<Watchdog>DISABLE</Watchdog>
+						<PdoNum>#0</PdoNum>
+					</SyncManager>
+
+					<SyncManager SubIndex="#2">
+						<Index>#x1c12</Index>
+						<Name>Sync Manager 2 PDO Assignment</Name>
+						<Dir>OUTPUT</Dir>
+						<Watchdog>ENABLE</Watchdog>
+						<PdoNum>#1</PdoNum>
+						<Pdo SubIndex="#1">
+							<Index>#x1600</Index>
+							<Name>RxPdo 1</Name>
+							<Entry SubIndex="#1">
+								<Index>#x6040</Index>
+								<SubIndex>#x0</SubIndex>
+								<DataType>UINT</DataType>
+								<BitLen>#16</BitLen>
+								<Name>controlword</Name>
+							</Entry>
+							<Entry SubIndex="#2">
+								<Index>#x6060</Index>
+								<SubIndex>#x0</SubIndex>
+								<DataType>SINT</DataType>
+								<BitLen>#8</BitLen>
+								<Name>op_mode</Name>
+							</Entry>
+							<Entry SubIndex="#3">
+								<Index>#x607a</Index>
+								<SubIndex>#x0</SubIndex>
+								<BitLen>#32</BitLen>
+								<DataType>DUINT</DataType>
+								<Name>Target position</Name>
+							</Entry>
+							<Entry SubIndex="#4">
+								<Index>#x60ff</Index>
+								<SubIndex>#x0</SubIndex>
+								<BitLen>#32</BitLen>
+								<DataType>DUINT</DataType>
+								<Name>Target velocity</Name>
+							</Entry>
+
+							<Entry SubIndex="#5">
+								<Index>#x6081</Index>
+								<SubIndex>#x0</SubIndex>
+								<BitLen>#32</BitLen>
+								<DataType>DINT</DataType>
+								<Name>profile Velocity</Name>
+							</Entry>
+						</Pdo>
+					</SyncManager>
+					<SyncManager SubIndex="#3">
+						<Index>#x1c13</Index>
+						<Name>Sync Manager 3 PDO Assignment</Name>
+						<Dir>INPUT</Dir>
+						<Watchdog>DISABLE</Watchdog>
+						<PdoNum>#1</PdoNum>
+						<Pdo SubIndex="#1">
+							<Index>#x1a00</Index>
+							<Name>TxPdo 1</Name>
+							<Entry SubIndex="#1">
+								<Index>#x6041</Index>
+								<SubIndex>#x0</SubIndex>
+								<DataType>UINT</DataType>
+								<BitLen>#16</BitLen>
+								<Name>statusword</Name>
+							</Entry>
+							<Entry SubIndex="#2">
+								<Index>#x6061</Index>
+								<SubIndex>#x0</SubIndex>
+								<DataType>SINT</DataType>
+								<BitLen>#8</BitLen>
+								<Name>op_mode_display</Name>
+							</Entry>
+							<Entry SubIndex="#3">
+								<Index>#x6064</Index>
+								<SubIndex>#x0</SubIndex>
+								<BitLen>#32</BitLen>
+								<DataType>DUINT</DataType>
+								<Name>actual_position</Name>
+							</Entry>
+							<Entry SubIndex="#4">
+								<Index>#x606c</Index>
+								<SubIndex>#x0</SubIndex>
+								<BitLen>#32</BitLen>
+								<DataType>INT</DataType>
+								<Name>actual_velocity</Name>
+							</Entry>
+							</Pdo>
+						</SyncManager>
+					</SyncManagers>
+				<Sdos>
+					<Sdo>
+						<Index>#x6083</Index>
+						<Subindex>#x0</Subindex>
+						<value>#x40000</value>
+						<BitLen>#32</BitLen>
+						<DataType>DINT</DataType>
+						<Name>Profile_acceleration</Name>
+					</Sdo>
+					<Sdo>
+						<Index>#x6084</Index>
+						<Subindex>#x0</Subindex>
+						<value>#x40000</value>
+						<BitLen>#32</BitLen>
+						<DataType>DINT</DataType>
+						<Name>Profile_deceleration</Name>
+					</Sdo>
+					<Sdo>
+						<Index>#x6085</Index>
+						<Subindex>#x0</Subindex>
+						<value>#x40000</value>
+						<BitLen>#32</BitLen>
+						<DataType>DINT</DataType>
+						<Name>Quick_stop_deceleration</Name>
+					</Sdo>
+				</Sdos>
+			</Slave>
+			<Slave  alias="#0" slave_position="#3">
+				<VendorId>#x000116c7</VendorId>
+				<ProductCode>#x003e0402</ProductCode>
+				<Name>X3E</Name>
+				<Emerg_size>#x08</Emerg_size>
+				<WatchDog>
+					<Divider>#x0</Divider>
+					<Intervals>#4000</Intervals>
+				</WatchDog>
+				<DC>
+					<SYNC SubIndex='#0'>
+						<Shift>#0</Shift>
+					</SYNC>
+				</DC>
+				<SyncManagers force_pdo_assign="#1">
+					<SyncManager SubIndex="#0">
+						<Index>#x1c10</Index>
+						<Name>Sync Manager 0 PDO Assignment</Name>
+						<Dir>OUTPUT</Dir>
+						<Watchdog>DISABLE</Watchdog>
+						<PdoNum>#0</PdoNum>
+					</SyncManager>
+
+					<SyncManager SubIndex="#1">
+						<Index>#x1c11</Index>
+						<Name>Sync Manager 1 PDO Assignment</Name>
+						<Dir>INPUT</Dir>
+						<Watchdog>DISABLE</Watchdog>
+						<PdoNum>#0</PdoNum>
+					</SyncManager>
+
+					<SyncManager SubIndex="#2">
+						<Index>#x1c12</Index>
+						<Name>Sync Manager 2 PDO Assignment</Name>
+						<Dir>OUTPUT</Dir>
+						<Watchdog>ENABLE</Watchdog>
+						<PdoNum>#1</PdoNum>
+						<Pdo SubIndex="#1">
+							<Index>#x1600</Index>
+							<Name>RxPdo 1</Name>
+							<Entry SubIndex="#1">
+								<Index>#x6040</Index>
+								<SubIndex>#x0</SubIndex>
+								<DataType>UINT</DataType>
+								<BitLen>#16</BitLen>
+								<Name>controlword</Name>
+							</Entry>
+							<Entry SubIndex="#2">
+								<Index>#x6060</Index>
+								<SubIndex>#x0</SubIndex>
+								<DataType>SINT</DataType>
+								<BitLen>#8</BitLen>
+								<Name>op_mode</Name>
+							</Entry>
+							<Entry SubIndex="#3">
+								<Index>#x607a</Index>
+								<SubIndex>#x0</SubIndex>
+								<BitLen>#32</BitLen>
+								<DataType>DUINT</DataType>
+								<Name>Target position</Name>
+							</Entry>
+							<Entry SubIndex="#4">
+								<Index>#x60ff</Index>
+								<SubIndex>#x0</SubIndex>
+								<BitLen>#32</BitLen>
+								<DataType>DUINT</DataType>
+								<Name>Target velocity</Name>
+							</Entry>
+
+							<Entry SubIndex="#5">
+								<Index>#x6081</Index>
+								<SubIndex>#x0</SubIndex>
+								<BitLen>#32</BitLen>
+								<DataType>DINT</DataType>
+								<Name>profile Velocity</Name>
+							</Entry>
+						</Pdo>
+					</SyncManager>
+					<SyncManager SubIndex="#3">
+						<Index>#x1c13</Index>
+						<Name>Sync Manager 3 PDO Assignment</Name>
+						<Dir>INPUT</Dir>
+						<Watchdog>DISABLE</Watchdog>
+						<PdoNum>#1</PdoNum>
+						<Pdo SubIndex="#1">
+							<Index>#x1a00</Index>
+							<Name>TxPdo 1</Name>
+							<Entry SubIndex="#1">
+								<Index>#x6041</Index>
+								<SubIndex>#x0</SubIndex>
+								<DataType>UINT</DataType>
+								<BitLen>#16</BitLen>
+								<Name>statusword</Name>
+							</Entry>
+							<Entry SubIndex="#2">
+								<Index>#x6061</Index>
+								<SubIndex>#x0</SubIndex>
+								<DataType>SINT</DataType>
+								<BitLen>#8</BitLen>
+								<Name>op_mode_display</Name>
+							</Entry>
+							<Entry SubIndex="#3">
+								<Index>#x6064</Index>
+								<SubIndex>#x0</SubIndex>
+								<BitLen>#32</BitLen>
+								<DataType>DUINT</DataType>
+								<Name>actual_position</Name>
+							</Entry>
+							<Entry SubIndex="#4">
+								<Index>#x606c</Index>
+								<SubIndex>#x0</SubIndex>
+								<BitLen>#32</BitLen>
+								<DataType>INT</DataType>
+								<Name>actual_velocity</Name>
+							</Entry>
+							</Pdo>
+						</SyncManager>
+					</SyncManagers>
+				<Sdos>
+					<Sdo>
+						<Index>#x6083</Index>
+						<Subindex>#x0</Subindex>
+						<value>#x40000</value>
+						<BitLen>#32</BitLen>
+						<DataType>DINT</DataType>
+						<Name>Profile_acceleration</Name>
+					</Sdo>
+					<Sdo>
+						<Index>#x6084</Index>
+						<Subindex>#x0</Subindex>
+						<value>#x40000</value>
+						<BitLen>#32</BitLen>
+						<DataType>DINT</DataType>
+						<Name>Profile_deceleration</Name>
+					</Sdo>
+					<Sdo>
+						<Index>#x6085</Index>
+						<Subindex>#x0</Subindex>
+						<value>#x40000</value>
+						<BitLen>#32</BitLen>
+						<DataType>DINT</DataType>
+						<Name>Quick_stop_deceleration</Name>
+					</Sdo>
+				</Sdos>
+			</Slave>
+			<Slave  alias="#0" slave_position="#4">
+				<VendorId>#x000116c7</VendorId>
+				<ProductCode>#x003e0402</ProductCode>
+				<Name>X3E</Name>
+				<Emerg_size>#x08</Emerg_size>
+				<WatchDog>
+					<Divider>#x0</Divider>
+					<Intervals>#4000</Intervals>
+				</WatchDog>
+				<DC>
+					<SYNC SubIndex='#0'>
+						<Shift>#0</Shift>
+					</SYNC>
+				</DC>
+				<SyncManagers force_pdo_assign="#1">
+					<SyncManager SubIndex="#0">
+						<Index>#x1c10</Index>
+						<Name>Sync Manager 0 PDO Assignment</Name>
+						<Dir>OUTPUT</Dir>
+						<Watchdog>DISABLE</Watchdog>
+						<PdoNum>#0</PdoNum>
+					</SyncManager>
+
+					<SyncManager SubIndex="#1">
+						<Index>#x1c11</Index>
+						<Name>Sync Manager 1 PDO Assignment</Name>
+						<Dir>INPUT</Dir>
+						<Watchdog>DISABLE</Watchdog>
+						<PdoNum>#0</PdoNum>
+					</SyncManager>
+
+					<SyncManager SubIndex="#2">
+						<Index>#x1c12</Index>
+						<Name>Sync Manager 2 PDO Assignment</Name>
+						<Dir>OUTPUT</Dir>
+						<Watchdog>ENABLE</Watchdog>
+						<PdoNum>#1</PdoNum>
+						<Pdo SubIndex="#1">
+							<Index>#x1600</Index>
+							<Name>RxPdo 1</Name>
+							<Entry SubIndex="#1">
+								<Index>#x6040</Index>
+								<SubIndex>#x0</SubIndex>
+								<DataType>UINT</DataType>
+								<BitLen>#16</BitLen>
+								<Name>controlword</Name>
+							</Entry>
+							<Entry SubIndex="#2">
+								<Index>#x6060</Index>
+								<SubIndex>#x0</SubIndex>
+								<DataType>SINT</DataType>
+								<BitLen>#8</BitLen>
+								<Name>op_mode</Name>
+							</Entry>
+							<Entry SubIndex="#3">
+								<Index>#x607a</Index>
+								<SubIndex>#x0</SubIndex>
+								<BitLen>#32</BitLen>
+								<DataType>DUINT</DataType>
+								<Name>Target position</Name>
+							</Entry>
+							<Entry SubIndex="#4">
+								<Index>#x60ff</Index>
+								<SubIndex>#x0</SubIndex>
+								<BitLen>#32</BitLen>
+								<DataType>DUINT</DataType>
+								<Name>Target velocity</Name>
+							</Entry>
+
+							<Entry SubIndex="#5">
+								<Index>#x6081</Index>
+								<SubIndex>#x0</SubIndex>
+								<BitLen>#32</BitLen>
+								<DataType>DINT</DataType>
+								<Name>profile Velocity</Name>
+							</Entry>
+						</Pdo>
+					</SyncManager>
+					<SyncManager SubIndex="#3">
+						<Index>#x1c13</Index>
+						<Name>Sync Manager 3 PDO Assignment</Name>
+						<Dir>INPUT</Dir>
+						<Watchdog>DISABLE</Watchdog>
+						<PdoNum>#1</PdoNum>
+						<Pdo SubIndex="#1">
+							<Index>#x1a00</Index>
+							<Name>TxPdo 1</Name>
+							<Entry SubIndex="#1">
+								<Index>#x6041</Index>
+								<SubIndex>#x0</SubIndex>
+								<DataType>UINT</DataType>
+								<BitLen>#16</BitLen>
+								<Name>statusword</Name>
+							</Entry>
+							<Entry SubIndex="#2">
+								<Index>#x6061</Index>
+								<SubIndex>#x0</SubIndex>
+								<DataType>SINT</DataType>
+								<BitLen>#8</BitLen>
+								<Name>op_mode_display</Name>
+							</Entry>
+							<Entry SubIndex="#3">
+								<Index>#x6064</Index>
+								<SubIndex>#x0</SubIndex>
+								<BitLen>#32</BitLen>
+								<DataType>DUINT</DataType>
+								<Name>actual_position</Name>
+							</Entry>
+							<Entry SubIndex="#4">
+								<Index>#x606c</Index>
+								<SubIndex>#x0</SubIndex>
+								<BitLen>#32</BitLen>
+								<DataType>INT</DataType>
+								<Name>actual_velocity</Name>
+							</Entry>
+							</Pdo>
+						</SyncManager>
+					</SyncManagers>
+				<Sdos>
+					<Sdo>
+						<Index>#x6083</Index>
+						<Subindex>#x0</Subindex>
+						<value>#x40000</value>
+						<BitLen>#32</BitLen>
+						<DataType>DINT</DataType>
+						<Name>Profile_acceleration</Name>
+					</Sdo>
+					<Sdo>
+						<Index>#x6084</Index>
+						<Subindex>#x0</Subindex>
+						<value>#x40000</value>
+						<BitLen>#32</BitLen>
+						<DataType>DINT</DataType>
+						<Name>Profile_deceleration</Name>
+					</Sdo>
+					<Sdo>
+						<Index>#x6085</Index>
+						<Subindex>#x0</Subindex>
+						<value>#x40000</value>
+						<BitLen>#32</BitLen>
+						<DataType>DINT</DataType>
+						<Name>Quick_stop_deceleration</Name>
+					</Sdo>
+				</Sdos>
+			</Slave>
+			<Slave  alias="#0" slave_position="#5">
+				<VendorId>#x000116c7</VendorId>
+				<ProductCode>#x003e0402</ProductCode>
+				<Name>X3E</Name>
+				<Emerg_size>#x08</Emerg_size>
+				<WatchDog>
+					<Divider>#x0</Divider>
+					<Intervals>#4000</Intervals>
+				</WatchDog>
+				<DC>
+					<SYNC SubIndex='#0'>
+						<Shift>#0</Shift>
+					</SYNC>
+				</DC>
+				<SyncManagers force_pdo_assign="#1">
+					<SyncManager SubIndex="#0">
+						<Index>#x1c10</Index>
+						<Name>Sync Manager 0 PDO Assignment</Name>
+						<Dir>OUTPUT</Dir>
+						<Watchdog>DISABLE</Watchdog>
+						<PdoNum>#0</PdoNum>
+					</SyncManager>
+
+					<SyncManager SubIndex="#1">
+						<Index>#x1c11</Index>
+						<Name>Sync Manager 1 PDO Assignment</Name>
+						<Dir>INPUT</Dir>
+						<Watchdog>DISABLE</Watchdog>
+						<PdoNum>#0</PdoNum>
+					</SyncManager>
+
+					<SyncManager SubIndex="#2">
+						<Index>#x1c12</Index>
+						<Name>Sync Manager 2 PDO Assignment</Name>
+						<Dir>OUTPUT</Dir>
+						<Watchdog>ENABLE</Watchdog>
+						<PdoNum>#1</PdoNum>
+						<Pdo SubIndex="#1">
+							<Index>#x1600</Index>
+							<Name>RxPdo 1</Name>
+							<Entry SubIndex="#1">
+								<Index>#x6040</Index>
+								<SubIndex>#x0</SubIndex>
+								<DataType>UINT</DataType>
+								<BitLen>#16</BitLen>
+								<Name>controlword</Name>
+							</Entry>
+							<Entry SubIndex="#2">
+								<Index>#x6060</Index>
+								<SubIndex>#x0</SubIndex>
+								<DataType>SINT</DataType>
+								<BitLen>#8</BitLen>
+								<Name>op_mode</Name>
+							</Entry>
+							<Entry SubIndex="#3">
+								<Index>#x607a</Index>
+								<SubIndex>#x0</SubIndex>
+								<BitLen>#32</BitLen>
+								<DataType>DUINT</DataType>
+								<Name>Target position</Name>
+							</Entry>
+							<Entry SubIndex="#4">
+								<Index>#x60ff</Index>
+								<SubIndex>#x0</SubIndex>
+								<BitLen>#32</BitLen>
+								<DataType>DUINT</DataType>
+								<Name>Target velocity</Name>
+							</Entry>
+
+							<Entry SubIndex="#5">
+								<Index>#x6081</Index>
+								<SubIndex>#x0</SubIndex>
+								<BitLen>#32</BitLen>
+								<DataType>DINT</DataType>
+								<Name>profile Velocity</Name>
+							</Entry>
+						</Pdo>
+					</SyncManager>
+					<SyncManager SubIndex="#3">
+						<Index>#x1c13</Index>
+						<Name>Sync Manager 3 PDO Assignment</Name>
+						<Dir>INPUT</Dir>
+						<Watchdog>DISABLE</Watchdog>
+						<PdoNum>#1</PdoNum>
+						<Pdo SubIndex="#1">
+							<Index>#x1a00</Index>
+							<Name>TxPdo 1</Name>
+							<Entry SubIndex="#1">
+								<Index>#x6041</Index>
+								<SubIndex>#x0</SubIndex>
+								<DataType>UINT</DataType>
+								<BitLen>#16</BitLen>
+								<Name>statusword</Name>
+							</Entry>
+							<Entry SubIndex="#2">
+								<Index>#x6061</Index>
+								<SubIndex>#x0</SubIndex>
+								<DataType>SINT</DataType>
+								<BitLen>#8</BitLen>
+								<Name>op_mode_display</Name>
+							</Entry>
+							<Entry SubIndex="#3">
+								<Index>#x6064</Index>
+								<SubIndex>#x0</SubIndex>
+								<BitLen>#32</BitLen>
+								<DataType>DUINT</DataType>
+								<Name>actual_position</Name>
+							</Entry>
+							<Entry SubIndex="#4">
+								<Index>#x606c</Index>
+								<SubIndex>#x0</SubIndex>
+								<BitLen>#32</BitLen>
+								<DataType>INT</DataType>
+								<Name>actual_velocity</Name>
+							</Entry>
+							</Pdo>
+						</SyncManager>
+					</SyncManagers>
+				<Sdos>
+					<Sdo>
+						<Index>#x6083</Index>
+						<Subindex>#x0</Subindex>
+						<value>#x40000</value>
+						<BitLen>#32</BitLen>
+						<DataType>DINT</DataType>
+						<Name>Profile_acceleration</Name>
+					</Sdo>
+					<Sdo>
+						<Index>#x6084</Index>
+						<Subindex>#x0</Subindex>
+						<value>#x40000</value>
+						<BitLen>#32</BitLen>
+						<DataType>DINT</DataType>
+						<Name>Profile_deceleration</Name>
+					</Sdo>
+					<Sdo>
+						<Index>#x6085</Index>
+						<Subindex>#x0</Subindex>
+						<value>#x40000</value>
+						<BitLen>#32</BitLen>
+						<DataType>DINT</DataType>
+						<Name>Quick_stop_deceleration</Name>
+					</Sdo>
+				</Sdos>
+			</Slave>
+			<Slave  alias="#0" slave_position="#6">
+				<VendorId>#x000116c7</VendorId>
+				<ProductCode>#x003e0402</ProductCode>
+				<Name>X3E</Name>
+				<Emerg_size>#x08</Emerg_size>
+				<WatchDog>
+					<Divider>#x0</Divider>
+					<Intervals>#4000</Intervals>
+				</WatchDog>
+				<DC>
+					<SYNC SubIndex='#0'>
+						<Shift>#0</Shift>
+					</SYNC>
+				</DC>
+				<SyncManagers force_pdo_assign="#1">
+					<SyncManager SubIndex="#0">
+						<Index>#x1c10</Index>
+						<Name>Sync Manager 0 PDO Assignment</Name>
+						<Dir>OUTPUT</Dir>
+						<Watchdog>DISABLE</Watchdog>
+						<PdoNum>#0</PdoNum>
+					</SyncManager>
+
+					<SyncManager SubIndex="#1">
+						<Index>#x1c11</Index>
+						<Name>Sync Manager 1 PDO Assignment</Name>
+						<Dir>INPUT</Dir>
+						<Watchdog>DISABLE</Watchdog>
+						<PdoNum>#0</PdoNum>
+					</SyncManager>
+
+					<SyncManager SubIndex="#2">
+						<Index>#x1c12</Index>
+						<Name>Sync Manager 2 PDO Assignment</Name>
+						<Dir>OUTPUT</Dir>
+						<Watchdog>ENABLE</Watchdog>
+						<PdoNum>#1</PdoNum>
+						<Pdo SubIndex="#1">
+							<Index>#x1600</Index>
+							<Name>RxPdo 1</Name>
+							<Entry SubIndex="#1">
+								<Index>#x6040</Index>
+								<SubIndex>#x0</SubIndex>
+								<DataType>UINT</DataType>
+								<BitLen>#16</BitLen>
+								<Name>controlword</Name>
+							</Entry>
+							<Entry SubIndex="#2">
+								<Index>#x6060</Index>
+								<SubIndex>#x0</SubIndex>
+								<DataType>SINT</DataType>
+								<BitLen>#8</BitLen>
+								<Name>op_mode</Name>
+							</Entry>
+							<Entry SubIndex="#3">
+								<Index>#x607a</Index>
+								<SubIndex>#x0</SubIndex>
+								<BitLen>#32</BitLen>
+								<DataType>DUINT</DataType>
+								<Name>Target position</Name>
+							</Entry>
+							<Entry SubIndex="#4">
+								<Index>#x60ff</Index>
+								<SubIndex>#x0</SubIndex>
+								<BitLen>#32</BitLen>
+								<DataType>DUINT</DataType>
+								<Name>Target velocity</Name>
+							</Entry>
+
+							<Entry SubIndex="#5">
+								<Index>#x6081</Index>
+								<SubIndex>#x0</SubIndex>
+								<BitLen>#32</BitLen>
+								<DataType>DINT</DataType>
+								<Name>profile Velocity</Name>
+							</Entry>
+						</Pdo>
+					</SyncManager>
+					<SyncManager SubIndex="#3">
+						<Index>#x1c13</Index>
+						<Name>Sync Manager 3 PDO Assignment</Name>
+						<Dir>INPUT</Dir>
+						<Watchdog>DISABLE</Watchdog>
+						<PdoNum>#1</PdoNum>
+						<Pdo SubIndex="#1">
+							<Index>#x1a00</Index>
+							<Name>TxPdo 1</Name>
+							<Entry SubIndex="#1">
+								<Index>#x6041</Index>
+								<SubIndex>#x0</SubIndex>
+								<DataType>UINT</DataType>
+								<BitLen>#16</BitLen>
+								<Name>statusword</Name>
+							</Entry>
+							<Entry SubIndex="#2">
+								<Index>#x6061</Index>
+								<SubIndex>#x0</SubIndex>
+								<DataType>SINT</DataType>
+								<BitLen>#8</BitLen>
+								<Name>op_mode_display</Name>
+							</Entry>
+							<Entry SubIndex="#3">
+								<Index>#x6064</Index>
+								<SubIndex>#x0</SubIndex>
+								<BitLen>#32</BitLen>
+								<DataType>DUINT</DataType>
+								<Name>actual_position</Name>
+							</Entry>
+							<Entry SubIndex="#4">
+								<Index>#x606c</Index>
+								<SubIndex>#x0</SubIndex>
+								<BitLen>#32</BitLen>
+								<DataType>INT</DataType>
+								<Name>actual_velocity</Name>
+							</Entry>
+							</Pdo>
+						</SyncManager>
+					</SyncManagers>
+				<Sdos>
+					<Sdo>
+						<Index>#x6083</Index>
+						<Subindex>#x0</Subindex>
+						<value>#x40000</value>
+						<BitLen>#32</BitLen>
+						<DataType>DINT</DataType>
+						<Name>Profile_acceleration</Name>
+					</Sdo>
+					<Sdo>
+						<Index>#x6084</Index>
+						<Subindex>#x0</Subindex>
+						<value>#x40000</value>
+						<BitLen>#32</BitLen>
+						<DataType>DINT</DataType>
+						<Name>Profile_deceleration</Name>
+					</Sdo>
+					<Sdo>
+						<Index>#x6085</Index>
+						<Subindex>#x0</Subindex>
+						<value>#x40000</value>
+						<BitLen>#32</BitLen>
+						<DataType>DINT</DataType>
+						<Name>Quick_stop_deceleration</Name>
+					</Sdo>
+				</Sdos>
+			</Slave>
+			<Slave  alias="#0" slave_position="#7">
+				<VendorId>#x000116c7</VendorId>
+				<ProductCode>#x003e0402</ProductCode>
+				<Name>X3E</Name>
+				<Emerg_size>#x08</Emerg_size>
+				<WatchDog>
+					<Divider>#x0</Divider>
+					<Intervals>#4000</Intervals>
+				</WatchDog>
+				<DC>
+					<SYNC SubIndex='#0'>
+						<Shift>#0</Shift>
+					</SYNC>
+				</DC>
+				<SyncManagers force_pdo_assign="#1">
+					<SyncManager SubIndex="#0">
+						<Index>#x1c10</Index>
+						<Name>Sync Manager 0 PDO Assignment</Name>
+						<Dir>OUTPUT</Dir>
+						<Watchdog>DISABLE</Watchdog>
+						<PdoNum>#0</PdoNum>
+					</SyncManager>
+
+					<SyncManager SubIndex="#1">
+						<Index>#x1c11</Index>
+						<Name>Sync Manager 1 PDO Assignment</Name>
+						<Dir>INPUT</Dir>
+						<Watchdog>DISABLE</Watchdog>
+						<PdoNum>#0</PdoNum>
+					</SyncManager>
+
+					<SyncManager SubIndex="#2">
+						<Index>#x1c12</Index>
+						<Name>Sync Manager 2 PDO Assignment</Name>
+						<Dir>OUTPUT</Dir>
+						<Watchdog>ENABLE</Watchdog>
+						<PdoNum>#1</PdoNum>
+						<Pdo SubIndex="#1">
+							<Index>#x1600</Index>
+							<Name>RxPdo 1</Name>
+							<Entry SubIndex="#1">
+								<Index>#x6040</Index>
+								<SubIndex>#x0</SubIndex>
+								<DataType>UINT</DataType>
+								<BitLen>#16</BitLen>
+								<Name>controlword</Name>
+							</Entry>
+							<Entry SubIndex="#2">
+								<Index>#x6060</Index>
+								<SubIndex>#x0</SubIndex>
+								<DataType>SINT</DataType>
+								<BitLen>#8</BitLen>
+								<Name>op_mode</Name>
+							</Entry>
+							<Entry SubIndex="#3">
+								<Index>#x607a</Index>
+								<SubIndex>#x0</SubIndex>
+								<BitLen>#32</BitLen>
+								<DataType>DUINT</DataType>
+								<Name>Target position</Name>
+							</Entry>
+							<Entry SubIndex="#4">
+								<Index>#x60ff</Index>
+								<SubIndex>#x0</SubIndex>
+								<BitLen>#32</BitLen>
+								<DataType>DUINT</DataType>
+								<Name>Target velocity</Name>
+							</Entry>
+
+							<Entry SubIndex="#5">
+								<Index>#x6081</Index>
+								<SubIndex>#x0</SubIndex>
+								<BitLen>#32</BitLen>
+								<DataType>DINT</DataType>
+								<Name>profile Velocity</Name>
+							</Entry>
+						</Pdo>
+					</SyncManager>
+					<SyncManager SubIndex="#3">
+						<Index>#x1c13</Index>
+						<Name>Sync Manager 3 PDO Assignment</Name>
+						<Dir>INPUT</Dir>
+						<Watchdog>DISABLE</Watchdog>
+						<PdoNum>#1</PdoNum>
+						<Pdo SubIndex="#1">
+							<Index>#x1a00</Index>
+							<Name>TxPdo 1</Name>
+							<Entry SubIndex="#1">
+								<Index>#x6041</Index>
+								<SubIndex>#x0</SubIndex>
+								<DataType>UINT</DataType>
+								<BitLen>#16</BitLen>
+								<Name>statusword</Name>
+							</Entry>
+							<Entry SubIndex="#2">
+								<Index>#x6061</Index>
+								<SubIndex>#x0</SubIndex>
+								<DataType>SINT</DataType>
+								<BitLen>#8</BitLen>
+								<Name>op_mode_display</Name>
+							</Entry>
+							<Entry SubIndex="#3">
+								<Index>#x6064</Index>
+								<SubIndex>#x0</SubIndex>
+								<BitLen>#32</BitLen>
+								<DataType>DUINT</DataType>
+								<Name>actual_position</Name>
+							</Entry>
+							<Entry SubIndex="#4">
+								<Index>#x606c</Index>
+								<SubIndex>#x0</SubIndex>
+								<BitLen>#32</BitLen>
+								<DataType>INT</DataType>
+								<Name>actual_velocity</Name>
+							</Entry>
+							</Pdo>
+						</SyncManager>
+					</SyncManagers>
+				<Sdos>
+					<Sdo>
+						<Index>#x6083</Index>
+						<Subindex>#x0</Subindex>
+						<value>#x40000</value>
+						<BitLen>#32</BitLen>
+						<DataType>DINT</DataType>
+						<Name>Profile_acceleration</Name>
+					</Sdo>
+					<Sdo>
+						<Index>#x6084</Index>
+						<Subindex>#x0</Subindex>
+						<value>#x40000</value>
+						<BitLen>#32</BitLen>
+						<DataType>DINT</DataType>
+						<Name>Profile_deceleration</Name>
+					</Sdo>
+					<Sdo>
+						<Index>#x6085</Index>
+						<Subindex>#x0</Subindex>
+						<value>#x40000</value>
+						<BitLen>#32</BitLen>
+						<DataType>DINT</DataType>
+						<Name>Quick_stop_deceleration</Name>
+					</Sdo>
+				</Sdos>
+			</Slave>
+		</Master>
+	</Masters>
+	<Axles>
+		<Axle master_index='#0' slave_position="#0" AxleIndex="#0" AxleOffset="#0">
+			<Mode>pp</Mode>
+			<Name>x-axle</Name>
+			<reg_pdo>
+				<Index>#x6040</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+				<Index>#x6041</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+				<Index>#x6064</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+				<Index>#x6060</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+				<Index>#x6061</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+				<Index>#x607a</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+			<Index>#x60ff</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+						<reg_pdo>
+			<Index>#x6081</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+			<Index>#x606c</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+		</Axle>
+		<Axle master_index='#0' slave_position="#1" AxleIndex="#1" AxleOffset="#0">
+			<Mode>pv</Mode>
+			<Name>x-axle</Name>
+			<reg_pdo>
+				<Index>#x6040</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+				<Index>#x6041</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+				<Index>#x6064</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+				<Index>#x6060</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+				<Index>#x6061</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+				<Index>#x607a</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+			<Index>#x60ff</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+						<reg_pdo>
+			<Index>#x6081</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+			<Index>#x606c</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+		</Axle>
+		<Axle master_index='#0' slave_position="#2" AxleIndex="#2" AxleOffset="#0">
+			<Mode>csp</Mode>
+			<Name>x-axle</Name>
+			<reg_pdo>
+				<Index>#x6040</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+				<Index>#x6041</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+				<Index>#x6064</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+				<Index>#x6060</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+				<Index>#x6061</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+				<Index>#x607a</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+			<Index>#x60ff</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+						<reg_pdo>
+			<Index>#x6081</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+			<Index>#x606c</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+		</Axle>
+		<Axle master_index='#0' slave_position="#3" AxleIndex="#3" AxleOffset="#0">
+			<Mode>pp</Mode>
+			<Name>x-axle</Name>
+			<reg_pdo>
+				<Index>#x6040</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+				<Index>#x6041</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+				<Index>#x6064</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+				<Index>#x6060</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+				<Index>#x6061</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+				<Index>#x607a</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+			<Index>#x60ff</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+						<reg_pdo>
+			<Index>#x6081</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+			<Index>#x606c</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+		</Axle>
+		<Axle master_index='#0' slave_position="#4" AxleIndex="#4" AxleOffset="#0">
+			<Mode>pp</Mode>
+			<Name>x-axle</Name>
+			<reg_pdo>
+				<Index>#x6040</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+				<Index>#x6041</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+				<Index>#x6064</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+				<Index>#x6060</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+				<Index>#x6061</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+				<Index>#x607a</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+			<Index>#x60ff</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+						<reg_pdo>
+			<Index>#x6081</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+			<Index>#x606c</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+		</Axle>
+		<Axle master_index='#0' slave_position="#5" AxleIndex="#5" AxleOffset="#0">
+			<Mode>pp</Mode>
+			<Name>x-axle</Name>
+			<reg_pdo>
+				<Index>#x6040</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+				<Index>#x6041</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+				<Index>#x6064</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+				<Index>#x6060</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+				<Index>#x6061</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+				<Index>#x607a</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+			<Index>#x60ff</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+						<reg_pdo>
+			<Index>#x6081</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+			<Index>#x606c</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+		</Axle>
+		<Axle master_index='#0' slave_position="#6" AxleIndex="#6" AxleOffset="#0">
+			<Mode>pp</Mode>
+			<Name>x-axle</Name>
+			<reg_pdo>
+				<Index>#x6040</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+				<Index>#x6041</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+				<Index>#x6064</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+				<Index>#x6060</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+				<Index>#x6061</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+				<Index>#x607a</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+			<Index>#x60ff</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+						<reg_pdo>
+			<Index>#x6081</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+			<Index>#x606c</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+		</Axle>
+		<Axle master_index='#0' slave_position="#7" AxleIndex="#7" AxleOffset="#0">
+			<Mode>pp</Mode>
+			<Name>x-axle</Name>
+			<reg_pdo>
+				<Index>#x6040</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+				<Index>#x6041</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+				<Index>#x6064</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+				<Index>#x6060</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+				<Index>#x6061</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+				<Index>#x607a</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+			<Index>#x60ff</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+						<reg_pdo>
+			<Index>#x6081</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+			<reg_pdo>
+			<Index>#x606c</Index>
+				<Subindex>#x0</Subindex>
+				<Name></Name>
+			</reg_pdo>
+		</Axle>
+	</Axles>
+</Config>
