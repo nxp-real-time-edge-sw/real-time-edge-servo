@@ -1,9 +1,9 @@
-## nxp-servo
-### nxp-servo Introduction 
+## rt-edge-servo
+### rt-edge-servo Introduction
 
-**nxp-servo** is a CiA402 (also referred to as DS402) profile framework based on Igh CoE interface( An EtherCAT Master stack, see _EtherCAT_ section for details ), and it abstracts the CiA 402 profile and provides a easy-used API  for App developer. 
+*rt-edge-servo* is a CiA402 (also referred to as DS402) profile framework based on Igh CoE interface( An EtherCAT Master stack, see _EtherCAT_ section for details ), and it abstracts the CiA 402 profile and provides a easy-used API  for App developer.
 
-the `nxp-servo` project consists of a basic library _libnservo_  and several  auxiliary tools.
+the `rt-edge-servo` project consists of a basic library _libnservo_  and several  auxiliary tools.
 
 The application developed with _libnservo_ is flexible enough to adapt to  the changing of CoE network by modifying the *xml* config file  which is loaded when the application starts. The _xml_ config file describes the necessary information, including EtherCAT network topology,  slaves configurations, masters configurations and all axles definitions.
 
@@ -21,7 +21,7 @@ There are three CoE servo on this network and we name them slave _**x**_ as the 
 
 ![1576479531931](_images\1576479531931.png)
 
-*nxp-servo* is running on top of `Igh` EtherCAT stack. And the `Igh` stack provides  CoE communication mechanisms - Mailbox and Process Data.  Using these mechanisms, *nxp-servo* could access the CiA Object Dictionary located on CoE servo.
+*rt-edge-servo* is running on top of `Igh` EtherCAT stack. And the `Igh` stack provides  CoE communication mechanisms - Mailbox and Process Data.  Using these mechanisms, *nxp-servo* could access the CiA Object Dictionary located on CoE servo.
 
 Control task initiates the master, all slaves on the CoE network and registers all PDOs to Igh stack, then constructs a data structure to describe each axle. Finally , the control task creates a task to run the user task periodically.
 
@@ -310,19 +310,14 @@ The element shown in figure above means set the object dictionary "6085" to 0x10
 
   A CoE servo system includes a CoE servo and a motor. In this test, '2HSS458-EC' servo system shown as in figure below will be used.
 
-* A board supported on OpenIL
+* A board supported on RT Edge
 
   In this test, LS1046ARDB will be used.
   
   ![1576568047857](_images\1576568047857.png)
 
 ##### Software preparation
-
-Make sure the below config options is selected when configuring OpenIL.
-
-* BR2_PACKAGE_IGH_ETHERCAT=y
-* BR2_PACKAGE_LIBXML2=y
-* BR2_PACKAGE_NXP-SERVO=y
+*rt-edge-servo* is enabled by default for all platforms on RT Edge.
 
 #####  CoE network Detection 
 
@@ -338,7 +333,7 @@ Make sure the below config options is selected when configuring OpenIL.
 * Check CoE servo using below command.
 
   ```
-  [root@OpenIL:~]#ethercat slaves
+  #ethercat slaves
   0  0:0  PREOP  +  2HSS458-EC
   ```
 ##### Start test
@@ -350,20 +345,20 @@ _Note:_  The _Position encoder resolution_ and _Velocity encoder resolution_ of 
   * Start the test service as below.
 
     ````
-    [root@OpenIL:~]# nservo_run -f /root/nservo_example/hss248_ec_config_pp.xml &
+    # nservo_run -f /root/nservo_example/hss248_ec_config_pp.xml &
     ````
     
   * Check whether the status of the slave has been transferred from "PREOP" to "OP".
 
     ````
-    [root@OpenIL:~]# ethercat slaves
+    # ethercat slaves
     0  0:0  OP  +  2HSS458-EC
     ````
 
   * Check whether the phase of the master has been transferred from "Idle" to "Operation".
 
     ````
-    [root@OpenIL:~]# ethercat master | grep Phase 
+    # ethercat master | grep Phase 
       Phase: Operation
     ````
 
@@ -372,21 +367,21 @@ _Note:_  The _Position encoder resolution_ and _Velocity encoder resolution_ of 
     * Get current mode of axle 0.
     
       ````
-      [root@OpenIL:~]# nservo_client -a 0 -c get_mode 
+      # nservo_client -a 0 -c get_mode 
       get_mode of the axle 0 : Profile Position Mode
       ````
       
     * Get current position of axle 0.
     
       ```
-      [root@OpenIL:~]# nservo_client -a 0 -c get_position 
+      # nservo_client -a 0 -c get_position 
       get_current_position of the axle 0 : 0
       ```
       
     * Get the profile speed of axle 0.
     
       ```
-      [root@OpenIL:~]# nservo_client -a 0  -c get_profile_speed
+      # nservo_client -a 0  -c get_profile_speed
       get_profile_speed of the axle 0 : 800000
       ```
       
@@ -395,7 +390,7 @@ _Note:_  The _Position encoder resolution_ and _Velocity encoder resolution_ of 
     * Set profile speed of axle 0.
     
       ```
-      [root@OpenIL:~]# nservo_client -a 0  -c set_profile_speed:20000   
+      # nservo_client -a 0  -c set_profile_speed:20000   
       set_profile_speed of the axle 0 : 20000
       ```
     
@@ -404,7 +399,7 @@ _Note:_  The _Position encoder resolution_ and _Velocity encoder resolution_ of 
     * Set target position of axle 0
     
       ````
-      [root@OpenIL:~]# nservo_client -c set_position:400000
+      # nservo_client -c set_position:400000
       set_position of the axle 0 : 400000
       ````
       
@@ -415,21 +410,21 @@ _Note:_  The _Position encoder resolution_ and _Velocity encoder resolution_ of 
     * Get current speed of axle 0
     
       ```
-      [root@OpenIL:~]# nservo_client -a 0  -c get_speed
+      # nservo_client -a 0  -c get_speed
       get_speed of the axle 0 : 19999
       ```
     
     * Get target position of axle 0
     
       ```
-      [root@OpenIL:~]# nservo_client -a 0  -c get_target_position
+      # nservo_client -a 0  -c get_target_position
       get_target_position of the axle 0 : 400000
       ```
     
    * Exit test
   
      ```
-     [root@OpenIL:~]# nservo_client  -c exit
+     # nservo_client  -c exit
      ```
   
 * _Profile Velocity_ mode test 
@@ -437,20 +432,20 @@ _Note:_  The _Position encoder resolution_ and _Velocity encoder resolution_ of 
   * Start the test service as below.
 
     ```
-    [root@OpenIL:~]# nservo_run -f /root/nservo_example/hss248_ec_config_pv.xml &
+    # nservo_run -f /root/nservo_example/hss248_ec_config_pv.xml &
     ```
 
   * Check whether the status of the slave has been transferred from "PREOP" to "OP".
 
     ````
-    [root@OpenIL:~]# ethercat slaves
+    # ethercat slaves
     0  0:0  OP  +  2HSS458-EC
     ````
 
   * Check whether the phase of the master has been transferred from "Idle" to "Operation".
 
     ````
-    [root@OpenIL:~]# ethercat master | grep Phase 
+    # ethercat master | grep Phase 
       Phase: Operation
     ````
 
@@ -459,14 +454,14 @@ _Note:_  The _Position encoder resolution_ and _Velocity encoder resolution_ of 
     * Get current mode of axle 0.
     
       ````
-      [root@OpenIL:~]# nservo_client -a 0  -c get_mode
+      # nservo_client -a 0  -c get_mode
       get_mode of the axle 0 : Profile Velocity Mode
       ````
       
     * Set target speed of axle 0
     
       ````
-      [root@OpenIL:~]# nservo_client -a 0  -c set_speed:40000
+      # nservo_client -a 0  -c set_speed:40000
       set_speed of the axle 0 : 40000
       ````
       
@@ -475,18 +470,18 @@ _Note:_  The _Position encoder resolution_ and _Velocity encoder resolution_ of 
     * Get current speed of axle 0
     
       ```
-      [root@OpenIL:~]# nservo_client -a 0  -c get_speed
+      # nservo_client -a 0  -c get_speed
       get_speed of the axle 0 : 32000
       ```
     
     * Get target speed of axle 0
     
       ```
-      [root@OpenIL:~]# nservo_client -a 0  -c get_target_speed
+      # nservo_client -a 0  -c get_target_speed
       get_target_speed of the axle 0 : 40000
       ```
    * Exit test
   
      ```
-     [root@OpenIL:~]# nservo_client  -c exit
+     # nservo_client  -c exit
      ```
