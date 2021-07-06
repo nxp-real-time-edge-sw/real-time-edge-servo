@@ -678,29 +678,41 @@ static void stack_prefault(void) {
 	memset(dummy, 0, MAX_SAFE_STACK);
 }
 
+#define timespec_add(a, b, result)                          \
+	do {                                                      \
+		(result)->tv_sec = (a)->tv_sec + (b)->tv_sec;           \
+		(result)->tv_nsec = (a)->tv_nsec + (b)->tv_nsec;        \
+		if ((result)->tv_nsec >= NSEC_PER_SEC)                  \
+		{                                                       \
+			++(result)->tv_sec;                             \
+			(result)->tv_nsec -= NSEC_PER_SEC;              \
+		}                                                       \
+	} while (0)
+
 static void *cycle_task(void *data) {
 	int ret, i, running = 1;
 	nser_global_data *ns_data = data;
 	nser_cycle_task_t task = ns_data->task;
 	struct timespec wakeup_time;
-	struct timespec end_time, start_time;
-	uint32_t exec_time;
+	struct timespec cycletime;
+	struct timespec start_time;
 	struct sched_param param;
 	memset(&param, 0, sizeof(param));
 	param.sched_priority = ns_data->sched_priority;
 	setscheduler(0, ns_data->sched_policy, &param);
 	debug_info("Starting cycle task with dt=%u ns.\n", ns_data->period_time);
+	cycletime.tv_nsec = ns_data->period_time;
+	cycletime.tv_sec = 0;
 	clock_gettime(CLOCK_REALTIME, &wakeup_time);
-	wakeup_time.tv_sec += 1; /* start in future */
-	wakeup_time.tv_nsec = 0;
-
 	while (running) {
+		timespec_add(&wakeup_time, &cycletime, &wakeup_time);
 		ret = clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &wakeup_time,
 		NULL);
 		if (ret) {
 			debug_error("Failed to clock_nanosleep(): %s\n", strerror(ret));
 			break;
 		}
+		clock_gettime(CLOCK_REALTIME, &start_time);
 		nser_receive_all(ns_data);
 		update_master_domain_states(ns_data);
 		update_slave_config_states(ns_data);
@@ -721,7 +733,6 @@ static void *cycle_task(void *data) {
 			}
 		}
 		running = (*task)(ns_data);
-		clock_gettime(CLOCK_REALTIME, &start_time);
 		for (i = 0; i < ns_data->num_master; i++){
 			ecrt_master_application_time(ns_data->ns_masteter[i].ec_master,
 					TIMESPEC2NS(start_time));
@@ -731,18 +742,6 @@ static void *cycle_task(void *data) {
 		}
 		nser_send_all(ns_data);
 		ns_data->cycle_counter++;
-		clock_gettime(CLOCK_REALTIME, &end_time);
-		exec_time = DIFF_NS(start_time, end_time);
-		wakeup_time.tv_nsec += ns_data->period_time;
-		if (wakeup_time.tv_nsec < exec_time) {
-			wakeup_time.tv_nsec += NSEC_PER_SEC;
-			wakeup_time.tv_sec--;
-		}
-		wakeup_time.tv_nsec -= exec_time;
-		while (wakeup_time.tv_nsec >= NSEC_PER_SEC) {
-			wakeup_time.tv_nsec -= NSEC_PER_SEC;
-			wakeup_time.tv_sec++;
-		}
 	}
 	return NULL;
 }
