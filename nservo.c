@@ -14,6 +14,8 @@
 #include <time.h> /* clock_gettime() */
 #include <sys/mman.h> /* mlockall() */
 #include <pthread.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 #include "config.h"
 #include "nservo.h"
@@ -689,6 +691,44 @@ static void stack_prefault(void) {
 		}                                                       \
 	} while (0)
 
+static int latency_target_fd = -1;
+
+/* Latency trick
+ * if the file /dev/cpu_dma_latency exists,
+ * open it and write a zero into it. This will tell 
+ * the power management system not to transition to 
+ * a high cstate (in fact, the system acts like idle=poll)
+ * When the fd to /dev/cpu_dma_latency is closed, the behavior
+ * goes back to the system default.
+ * 
+ * Documentation/power/pm_qos_interface.txt
+ */
+static void set_low_latency(void)
+{
+	struct stat s;
+	int ret;
+	int32_t latency_target_value = 0;
+
+	if (stat("/dev/cpu_dma_latency", &s) == 0) {
+		latency_target_fd = open("/dev/cpu_dma_latency", O_RDWR);
+		if (latency_target_fd == -1)
+			return;
+		ret = write(latency_target_fd, &latency_target_value, 4);
+		if (ret == 0) {
+			printf("# error setting cpu_dma_latency to %d!: %s\n", latency_target_value, strerror(errno));
+			close(latency_target_fd);
+			return;
+		}
+		printf("# /dev/cpu_dma_latency set to %dus\n", latency_target_value);
+	}
+}
+
+void stop_low_latency(void)
+{
+	if (latency_target_fd >= 0)
+		close(latency_target_fd);
+}
+
 static void *cycle_task(void *data) {
 	int ret, i, running = 1;
 	nser_global_data *ns_data = data;
@@ -701,6 +741,7 @@ static void *cycle_task(void *data) {
 	param.sched_priority = ns_data->sched_priority;
 	setscheduler(0, ns_data->sched_policy, &param);
 	debug_info("Starting cycle task with dt=%u ns.\n", ns_data->period_time);
+	set_low_latency();
 	cycletime.tv_nsec = ns_data->period_time;
 	cycletime.tv_sec = 0;
 	clock_gettime(CLOCK_REALTIME, &wakeup_time);
@@ -743,6 +784,7 @@ static void *cycle_task(void *data) {
 		nser_send_all(ns_data);
 		ns_data->cycle_counter++;
 	}
+	stop_low_latency();
 	return NULL;
 }
 static int raise_soft_prio(int policy, const struct sched_param *param)
