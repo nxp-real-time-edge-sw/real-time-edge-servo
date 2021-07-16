@@ -1,9 +1,9 @@
-## rt-edge-servo
-### rt-edge-servo Introduction
+## real-time-edge-servo
+### real-time-edge-servo Introduction
 
-*rt-edge-servo* is a CiA402 (also referred to as DS402) profile framework based on Igh CoE interface( An EtherCAT Master stack, see _EtherCAT_ section for details ), and it abstracts the CiA 402 profile and provides a easy-used API  for App developer.
+*real-time-edge-servo* is a CiA402 (also referred to as DS402) profile framework based on Igh CoE interface( An EtherCAT Master stack, see _EtherCAT_ section for details ), and it abstracts the CiA 402 profile and provides a easy-used API  for App developer.
 
-the `rt-edge-servo` project consists of a basic library _libnservo_  and several  auxiliary tools.
+the `real-time-edge-servo` project consists of a basic library _libnservo_  and several  auxiliary tools.
 
 The application developed with _libnservo_ is flexible enough to adapt to  the changing of CoE network by modifying the *xml* config file  which is loaded when the application starts. The _xml_ config file describes the necessary information, including EtherCAT network topology,  slaves configurations, masters configurations and all axles definitions.
 
@@ -21,7 +21,7 @@ There are three CoE servo on this network and we name them slave _**x**_ as the 
 
 ![1576479531931](_images\1576479531931.png)
 
-*rt-edge-servo* is running on top of `Igh` EtherCAT stack. And the `Igh` stack provides  CoE communication mechanisms - Mailbox and Process Data.  Using these mechanisms, *nxp-servo* could access the CiA Object Dictionary located on CoE servo.
+*real-time-edge-servo* is running on top of `Igh` EtherCAT stack. And the `Igh` stack provides  CoE communication mechanisms - Mailbox and Process Data.  Using these mechanisms, *real-time-edge-servo* could access the CiA Object Dictionary located on CoE servo.
 
 Control task initiates the master, all slaves on the CoE network and registers all PDOs to Igh stack, then constructs a data structure to describe each axle. Finally , the control task creates a task to run the user task periodically.
 
@@ -150,9 +150,9 @@ As `CoE network ` section shown, the Master could has many slaves, so the Master
 
 * `<DC>` element is used to set the sync info.
 
-* `<SyncManagers>` element should contain all syncManager channels.  
+* `<SyncManagers>` element should contain all syncManager channels.
 
-* `<Sdos>` element contains the default value  we want to initiate by SDO channel.   
+* `<Sdos>` element contains the default value  we want to initiate by SDO channel.
 
 #### SyncManagers Element
 
@@ -226,7 +226,7 @@ For a CoE device, there are generally four syncManager channels.
 ```
 
 * `<Index>` element is the object address. 
-* `<Name>` is a name of this syncmanager channel.  
+* `<Name>` is a name of this syncmanager channel.
 * `<Dir>` element is the direction of  this syncmanager channel.
 * `<Watchdog>` is used to set watchdog of  this syncmanager channel.
 * `<PdoNum>` element means how many PDO we want to set.
@@ -310,14 +310,14 @@ The element shown in figure above means set the object dictionary "6085" to 0x10
 
   A CoE servo system includes a CoE servo and a motor. In this test, '2HSS458-EC' servo system shown as in figure below will be used.
 
-* A board supported on RT Edge
+* A board supported on Real-time Edge
 
   In this test, LS1046ARDB will be used.
   
   ![1576568047857](_images\1576568047857.png)
 
 ##### Software preparation
-*rt-edge-servo* is enabled by default for all platforms on RT Edge.
+*real-time-edge-servo* is enabled by default for all platforms on Real-time Edge.
 
 #####  CoE network Detection 
 
