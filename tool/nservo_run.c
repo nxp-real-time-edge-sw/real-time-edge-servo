@@ -191,6 +191,10 @@ int command_parse(char *command, struct axle_status_t *axle_status, int axle_num
 	command = s_colon + 1;
 	if (strcmp("set_speed", command) == 0){
 		if (axle_status[axle].mode == op_mode_pv) {
+			if (!p_colon) {
+				len = snprintf(buf, 256, "invalid cmd: %s\n", command);
+				goto send;
+			}
 			sscanf(p_colon + 1, "%d", &value);
 			axle_status[axle].target_speed = value;
 		}
@@ -198,6 +202,10 @@ int command_parse(char *command, struct axle_status_t *axle_status, int axle_num
 	}
 	else if (strcmp("set_profile_speed", command) == 0){
 		if (axle_status[axle].mode == op_mode_pp) {
+			if (!p_colon) {
+				len = snprintf(buf, 256, "invalid cmd: %s\n", command);
+				goto send;
+			}
 			sscanf(p_colon + 1, "%d", &value);
 			axle_status[axle].profile_speed = value;
 		}
@@ -205,6 +213,10 @@ int command_parse(char *command, struct axle_status_t *axle_status, int axle_num
 	}
 	else if (strcmp("set_position", command) == 0){
 		if (axle_status[axle].mode == op_mode_pp) {
+			if (!p_colon) {
+				len = snprintf(buf, 256, "invalid cmd: %s\n", command);
+				goto send;
+			}
 			sscanf(p_colon + 1, "%d", &value);
 			axle_status[axle].target_position = value;
 		}
@@ -398,7 +410,6 @@ int main(int argc, char **argv) {
 						}
 						close(fds[i].fd);
 						fds[i].fd = -1;
-						connfd = -1;
 						nfds = 1;
 					}
 				}
