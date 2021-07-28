@@ -151,7 +151,7 @@ char* get_cmd() {
 		} else if (c == '\n') {
 			if (hist_index != buff_index) {
 				strncpy(buff[buff_index % buff_size],
-						buff[hist_index % buff_size], buff_len);
+						buff[hist_index % buff_size], buff_len - 1);
 			}
 			index = buff_index % buff_size;
 			if ((l = strlen(buff[buff_index % buff_size])) > 0)
@@ -284,7 +284,7 @@ void start_interaction(tool_data *t_data, nser_global_data *ns_data) {
 	uint32_t value;
 	int size;
 	while (1) {
-		strncpy(buf, get_cmd(), 64);
+		strncpy(buf, get_cmd(), 63);
 		printf("\n");
 		argc = parse_cmd(buf, argv);
 
