@@ -410,7 +410,6 @@ int main(int argc, char **argv) {
 						}
 						close(fds[i].fd);
 						fds[i].fd = -1;
-						connfd = -1;
 						nfds = 1;
 					}
 				}
