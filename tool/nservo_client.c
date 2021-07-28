@@ -97,7 +97,7 @@ int main(int argc, char **argv) {
 	len = recv(sockfd, buffer, 256, 0);
 	if (len > 0) {
 		buffer[len] = '\0';
+		printf("%s\n",buffer);
 	}
-	printf("%s\n",buffer);
 	close(sockfd);
 }
