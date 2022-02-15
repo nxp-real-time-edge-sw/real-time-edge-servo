@@ -73,6 +73,7 @@ install:
 	install -m 664 example/hss248_ec_config_pp.xml  $(DESTDIR)$(HOME_DIR)/nservo_example
 	install -m 664 example/hss248_ec_config_pv.xml  $(DESTDIR)$(HOME_DIR)/nservo_example
 	install -m 664 example/x3e_config.xml  $(DESTDIR)$(HOME_DIR)/nservo_example
+	install -m 664 example/Delta-ASDA-B3-two-masters.xml  $(DESTDIR)$(HOME_DIR)/nservo_example
 
 clean:
 	rm *.o *.a
