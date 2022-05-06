@@ -54,7 +54,7 @@ uint32_t get_sdo(uint16_t index, uint8_t subindex, nser_axle *ns_axle,
 }
 
 float nser_sdo_get_Position_encoder_resolution(nser_axle *ns_axle) {
-	uint32_t encoder_increments, motor_resolution;
+	uint32_t encoder_increments = 0, motor_resolution = 0;
 	if (nser_sdo_get_PRE_Encoder_increments(ns_axle, &encoder_increments)) {
 		debug_error("\n");
 		return 0;
