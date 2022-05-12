@@ -281,7 +281,7 @@ void start_interaction(tool_data *t_data, nser_global_data *ns_data) {
 	pdo_cmd_fun_t pdo_cmd_fun;
 	sdo_cmd_fun_t sdo_cmd_fun;
 	int axle_index;
-	uint32_t value;
+	uint32_t value = 0;
 	int size;
 	while (1) {
 		strncpy(buf, get_cmd(), 63);
