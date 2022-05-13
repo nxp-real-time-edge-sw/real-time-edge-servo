@@ -273,11 +273,17 @@ int main(int argc, char **argv) {
                                 service_port = atoi(optarg);
                                 break;
                         case 'f':
+								if (conf_file_name != NULL){
+									free(conf_file_name);
+								}
                                 conf_file_name = strdup(optarg);
                                 break;
                         default:
                                 printf("%s", usage);
-                                return -1;
+								if (conf_file_name != NULL){
+									free(conf_file_name);
+								}
+								return -1;
                 }
         }
 
@@ -393,7 +399,7 @@ int main(int argc, char **argv) {
 					if (ret > 0) {
 						len += ret;
 						if (buffer[len - 1] == '\n') {
-							if (buffer[len -2] == '\r')
+							if (len > 1 && buffer[len -2] == '\r')
 								buffer[len - 2] = '\0';
 							else
 								buffer[len - 1] = '\0';
@@ -418,8 +424,13 @@ int main(int argc, char **argv) {
 	}
 
 	user_cycle_task_stop(ns_data);
+	
 destroy_master:
 	nser_deactivate_all_masters(ns_data);
 close_tcp:
 	close(sockfd);
+free_ns_data:
+	free(ns_data);
+free_conf_file_name:
+	free(conf_file_name);
 }
