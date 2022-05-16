@@ -573,6 +573,7 @@ static void nser_receive_all(nser_global_data *ns_data) {
 /*****************************************************************************/
 static void update_slave_config_states(nser_global_data *ns_data) {
 	ec_slave_config_state_t s;
+	s.al_state = 1;
 	int i, j;
 	nser_master *ns_master;
 	nser_slave *ns_slave;
