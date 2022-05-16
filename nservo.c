@@ -95,7 +95,7 @@ float nser_sdo_get_Velocity_encoder_resolution(nser_axle *ns_axle) {
 }
 
 float nser_sdo_get_Gear_ratio(nser_axle *ns_axle) {
-	uint32_t motor, driving;
+	uint32_t motor = 0, driving = 0;
 	if (nser_sdo_get_GR_Motor_revolutions(ns_axle, &motor)) {
 		debug_error("\n");
 		return 0;
