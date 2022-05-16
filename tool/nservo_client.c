@@ -51,15 +51,31 @@ int main(int argc, char **argv) {
                                 service_port = atoi(optarg);
                                 break;
                         case 's':
+                                if (service_ip != NULL)
+                                {
+                                        free(service_ip);
+                                }
                                 service_ip = strdup(optarg);
                                 break;
                         case 'a':
                                 axle = atoi(optarg);
                                 break;
                         case 'c':
+                                if (cmd != NULL)
+                                {
+                                        free(cmd);
+                                }
                                 cmd = strdup(optarg);
                                 break;
                         default:
+                                if (service_ip != NULL)
+                                {
+                                        free(service_ip);
+                                }
+                                if (cmd != NULL)
+                                {
+                                        free(cmd);
+                                }
                                 printf("%s", usage);
               	                return -1;
                 }
@@ -100,4 +116,6 @@ int main(int argc, char **argv) {
 		printf("%s\n",buffer);
 	}
 	close(sockfd);
+        free(cmd);
+        free(service_ip);
 }
