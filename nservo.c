@@ -25,7 +25,7 @@
 static int setscheduler(pid_t pid, int policy, const struct sched_param *param);
 uint32_t set_sdo(uint16_t index, uint8_t subindex, nser_axle *ns_axle,
 		void *data, size_t data_size) {
-	uint32_t abort_code;
+	uint32_t abort_code = 0;
 	uint16_t index_new = index + 0x800 * ns_axle->axle_offset;
 	if (ecrt_master_sdo_download(ns_axle->nser_master->ec_master,
 			ns_axle->slave->slave_position, index_new, subindex, data,
@@ -38,7 +38,7 @@ uint32_t set_sdo(uint16_t index, uint8_t subindex, nser_axle *ns_axle,
 
 uint32_t get_sdo(uint16_t index, uint8_t subindex, nser_axle *ns_axle,
 		uint8_t *target, size_t target_size, size_t *result_size) {
-	uint32_t abort_code;
+	uint32_t abort_code = 0;
 	size_t result_size_local;
 	uint16_t index_new = index + 0x800 * ns_axle->axle_offset;
 	if (!result_size)
@@ -73,7 +73,7 @@ float nser_sdo_get_Position_encoder_resolution(nser_axle *ns_axle) {
 }
 
 float nser_sdo_get_Velocity_encoder_resolution(nser_axle *ns_axle) {
-	uint32_t encoder_increments_per_s, motor_resolution_per_s;
+	uint32_t encoder_increments_per_s = 0, motor_resolution_per_s = 0;
 	if (nser_sdo_get_VNR_Encoder_increments_per_second(ns_axle,
 			&encoder_increments_per_s)) {
 		debug_error("\n");
