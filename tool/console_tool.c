@@ -496,9 +496,13 @@ int main(int argc, char **argv) {
 
 	if (!(t_data = nser_config_tool_init(max_domain_size))) {
 		fprintf(stderr, "Failed to initialize tool's configuration \n");
-		return 0;
+		goto free_ns_data;
 	}
 
 	start_interaction(t_data, ns_data);
+
+free_ns_data:
+	free(ns_data);
+	return 0;
 }
 
