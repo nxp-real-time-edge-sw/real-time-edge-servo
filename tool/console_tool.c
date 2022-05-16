@@ -150,7 +150,7 @@ char* get_cmd() {
 			printf(ANSI_CURSOR_COLUMN, col + prompt_len);
 		} else if (c == '\n') {
 			if (hist_index != buff_index) {
-				strncpy(buff[buff_index % buff_size],
+				memcpy(buff[buff_index % buff_size],
 						buff[hist_index % buff_size], buff_len - 1);
 			}
 			index = buff_index % buff_size;
