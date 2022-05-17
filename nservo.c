@@ -122,7 +122,7 @@ nser_master *create_new_master(unsigned int num) {
 		return NULL;
 	}
 	ns_master->slave_number = 0;
-	ns_master->ns_master_state = UNKNOWN;
+	ns_master->ns_master_state = UN_KNOWN;
 	ns_master->reference_clock_slave = NULL;
 	return ns_master;
 }
@@ -477,7 +477,7 @@ int nser_activate_master(nser_global_data *ns_data, unsigned int master_index) {
 			for (i = 0; i < ns_data->num_master; i++) {
 				if (ns_data->ns_masteter[i].ns_master_state == ACTIVATE) {
 					ecrt_master_deactivate(ns_data->ns_masteter[i].ec_master);
-					ns_data->ns_masteter[i].ns_master_state = UNKNOWN;
+					ns_data->ns_masteter[i].ns_master_state = UN_KNOWN;
 				}
 			}
 
