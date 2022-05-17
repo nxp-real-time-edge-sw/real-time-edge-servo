@@ -14,7 +14,6 @@
 #include <netdb.h> 
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include <getopt.h>
 #define PORT 6000
 #define SA struct sockaddr 
 
