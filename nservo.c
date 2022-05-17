@@ -540,6 +540,7 @@ static void update_master_domain_states(nser_global_data *ns_data) {
 	ec_master_state_t master_state;
 	ec_domain_state_t domain_state;
 	domain_state.wc_state = EC_WC_ZERO;
+	master_state.slaves_responding = 0;
 	nser_master *ns_master;
 	if (!(ns_data->cycle_counter % ns_data->master_status_update_freq)) {
 		for (i = 0; i < ns_data->num_master; i++) {
