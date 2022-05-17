@@ -877,24 +877,28 @@ nser_global_data *nser_app_run_init(char *xmlfile) {
 	memset(ns_data, 0, sizeof(nser_global_data));
 	if ((nser_xmlconfig(ns_data, xmlfile))) {
 		debug_error("Failed to open xml configuration file: %s \n", xmlfile);
-		return NULL;
+		goto free_ns_data;
 	}
 
 	if (nser_config_all_masters(ns_data)) {
 		debug_error("Failed to configure masters\n");
-		return NULL;
+		goto free_ns_data;
 	}
 
 	if (nser_config_all_axles(ns_data)) {
 		debug_error("Failed to configure axles\n");
-		return NULL;
+		goto free_ns_data;
 	}
 
 	if (nser_activate_all_masters(ns_data)) {
 		debug_error("Failed to activate all masters\n");
-		return NULL;
+		goto free_ns_data;
 	}
 	return ns_data;
+
+free_ns_data:
+	free(ns_data);
+	return NULL;
 }
 
 nser_global_data *nser_app_run_init_without_activate(char *xmlfile) {
