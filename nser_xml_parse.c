@@ -810,7 +810,9 @@ static int xml_config_axles(xmlNode *root_element, nser_global_data *ns_data) {
 
 		mode = get_subnode_value_str(axle_node, "Mode");
 
-		if (mode[0] == 'p' && mode[1] == 'p')
+		if (mode == NULL)
+			ns_axles[axle_index].mode = op_mode_no;
+		else if (mode[0] == 'p' && mode[1] == 'p')
 			ns_axles[axle_index].mode = op_mode_pp;
 		else if (mode[0] == 'v' && mode[1] == 'l')
 			ns_axles[axle_index].mode = op_mode_vl;
