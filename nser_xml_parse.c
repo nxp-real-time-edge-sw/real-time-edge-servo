@@ -635,21 +635,21 @@ static int xml_create_new_master(xmlNode * root_element,
 	for (i = 0; i < num; i++) {
 		if (!(master_node = find_subnode_index(masters_node, "Master", i))) {
 			debug_error("Failed to find master%d\n", i);
-			return -1;
+			goto free_ns_master;
 		}
 		master = ns_master + i;
 
 		ret = get_subnode_value(master_node, "Master_index");
 		if (ret < 0) {
 			debug_error("Failed to get master%d Master_index\n", i);
-			return -1;
+			goto free_ns_master;
 		}
 		master->master_index = (unsigned int) ret;
 		debug_info(" Start to find slaves for master%d\n", master->master_index);
 		if (xml_create_new_slaves(master_node, master)) {
 			debug_error("Failed to create slaves for master(%d)\n",
 					master->master_index);
-			return -1;
+			goto free_ns_master;
 		}
 
 		/* Configure reference clock;*/
@@ -680,6 +680,10 @@ static int xml_create_new_master(xmlNode * root_element,
 	ns_data->ns_masteter = ns_master;
 	ns_data->num_master = num;
 	return 0;
+
+free_ns_master:
+	free(ns_master);
+	return -1;
 }
 
 static nser_slave *get_ns_slave(nser_master *ns_master, uint16_t position) {
