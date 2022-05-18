@@ -282,7 +282,7 @@ void start_interaction(tool_data *t_data, nser_global_data *ns_data) {
 	sdo_cmd_fun_t sdo_cmd_fun;
 	int axle_index;
 	uint32_t value = 0;
-	int size;
+	int size = 0;
 	while (1) {
 		strncpy(buf, get_cmd(), 63);
 		printf("\n");
