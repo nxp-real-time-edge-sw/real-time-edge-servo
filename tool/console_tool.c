@@ -428,7 +428,8 @@ void start_interaction(tool_data *t_data, nser_global_data *ns_data) {
 					fprintf(stderr, "Configuration xml file has been loaded\n");
 					continue;
 				}
-				if (!nser_app_load_xml(ns_data, argv[1])) {
+				char *xmlfile = argv[1];
+				if (!nser_app_load_xml(ns_data, xmlfile)) {
 					t_data->isLoadXML = 1;
 				}
 			} else if (!strncmp(argv[0], "activate", 8)) {
