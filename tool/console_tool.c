@@ -141,8 +141,8 @@ char* get_cmd() {
 				hist_index = buff_index;
 			}
 			if (col) {
-				strcpy(buff[buff_index % buff_size] + col - 1,
-						buff[buff_index % buff_size] + col);
+				strncpy(buff[buff_index % buff_size] + col - 1,
+						buff[buff_index % buff_size] + col, buff_len - col);
 				col--;
 				l--;
 			}
