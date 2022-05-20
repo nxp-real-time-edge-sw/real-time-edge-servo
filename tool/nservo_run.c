@@ -258,7 +258,7 @@ int main(int argc, char **argv) {
 	signal(SIGTERM, signal_handler);
 	signal(SIGINT, signal_handler);
 	char buffer[256];
-	int sockfd, connfd = -1, len, on = 1, timeout, rc, ret, nfds, nfds_c, i;
+	int sockfd, connfd, len, on = 1, timeout, rc, ret, nfds, nfds_c, i;
 	struct sockaddr_in servaddr;
 	struct pollfd fds[6];
 	int c;

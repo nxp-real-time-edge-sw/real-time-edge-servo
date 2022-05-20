@@ -584,7 +584,22 @@ static void update_slave_config_states(nser_global_data *ns_data) {
 			for (j = 0; j < ns_master->slave_number; j++) {
 				ns_slave = &ns_master->slaves[j];
 				ecrt_slave_config_state(ns_slave->sc, &s);
-				ns_slave->ns_slave_state = s.al_state;
+				if (s.al_state == 0x00){
+					ns_slave->ns_slave_state = UNKNOWN;
+				} else if (s.al_state == 0x01){
+					ns_slave->ns_slave_state = INIT;
+				} else if (s.al_state == 0x02){
+					ns_slave->ns_slave_state = PREOP;
+				} else if (s.al_state == 0x03){
+					ns_slave->ns_slave_state = BOOT;
+				}else if (s.al_state == 0x04){
+					ns_slave->ns_slave_state = SAFEOP;
+				}else if (s.al_state == 0x08){
+					ns_slave->ns_slave_state = OP;
+				}else {
+					debug_info("method update_slave_config_states s.al_state=%d\n", s.al_state);
+				}
+				
 			}
 		}
 	}
