@@ -547,7 +547,13 @@ static void update_master_domain_states(nser_global_data *ns_data) {
 			ns_master = &ns_data->ns_masteter[i];
 			ecrt_domain_state(ns_master->domain, &domain_state);
 			ecrt_master_state(ns_master->ec_master, &master_state);
-			ns_master->ns_domain_state = domain_state.wc_state;
+			if (domain_state.wc_state == EC_WC_ZERO){
+				ns_master->ns_domain_state = ZERO;
+			} else if (domain_state.wc_state == EC_WC_INCOMPLETE){
+				ns_master->ns_domain_state = INCOMPLETE;
+			} else {
+				ns_master->ns_domain_state = COMPLETE;
+			}
 			if (master_state.slaves_responding == 0) {
 				ns_master->ns_master_state = NO_SLAVE;
 			} else {
