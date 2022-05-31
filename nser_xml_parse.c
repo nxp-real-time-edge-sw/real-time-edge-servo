@@ -410,7 +410,7 @@ static int xml_create_new_slaves(xmlNode * master_node, nser_master *master) {
 
 	debug_info("  Find %d slaves\n", slaves_num);
 
-	if ((slaves = create_new_slaves(slaves_num)) < 0) {
+	if ((slaves = create_new_slaves(slaves_num)) == NULL) {
 		debug_error("Failed to create new slaves on master%d\n",
 				master->master_index);
 		return -1;
@@ -420,7 +420,7 @@ static int xml_create_new_slaves(xmlNode * master_node, nser_master *master) {
 		if (!(slave_node = find_subnode_index(master_node, "slave", i))) {
 			debug_error("Failed to find slave%d on master%d\n", i,
 					master->master_index);
-			return -1;
+			goto free_slaves;
 		}
 		/*Get slave's position, vendorId, produceID and alias*/
 		ret = get_attr_slave_position(slave_node);
@@ -428,7 +428,7 @@ static int xml_create_new_slaves(xmlNode * master_node, nser_master *master) {
 			debug_error(
 					"Failed to get slave%d attr slave_position on master%d\n",
 					i, master->master_index);
-			return -1;
+			goto free_slaves;
 		}
 		slave = &slaves[(uint16_t) ret];
 		slave->slave_position = (uint16_t) ret;
@@ -443,14 +443,14 @@ static int xml_create_new_slaves(xmlNode * master_node, nser_master *master) {
 			debug_error(
 					"The position of slave%d has been occupied on master%d\n",
 					i, master->master_index);
-			return -1;
+			goto free_slaves;
 		}
 
 		ret = get_subnode_value(slave_node, "VendorId");
 		if (ret < 0) {
 			debug_error("Failed to get slave%d VendorId on master%d\n", i,
 					master->master_index);
-			return -1;
+			goto free_slaves;
 		}
 		slave->VendorId = (uint32_t) ret;
 
@@ -458,7 +458,7 @@ static int xml_create_new_slaves(xmlNode * master_node, nser_master *master) {
 		if (ret < 0) {
 			debug_error("Failed to get slave%d ProductCode on master%d\n", i,
 					master->master_index);
-			return -1;
+			goto free_slaves;
 		}
 		slave->ProductCode = (uint32_t) ret;
 
@@ -468,7 +468,7 @@ static int xml_create_new_slaves(xmlNode * master_node, nser_master *master) {
 		if (ret < 0) {
 			debug_error("Failed to get slave%d attr alias on master%d\n", i,
 					master->master_index);
-			return -1;
+			goto free_slaves;
 		}
 		slave->alias = (uint32_t) ret;
 
@@ -500,20 +500,20 @@ static int xml_create_new_slaves(xmlNode * master_node, nser_master *master) {
 					debug_error(
 							"Failed to malloc memory to nser_sdo_entry on slave%d master%d\n",
 							i, master->master_index);
-					return -1;
+					goto free_slaves;
 				}
 				for (j = 0; j < sdos_num; j++) {
 					if (!(sdo_node = find_subnode_index(sdos_node, "sdo", j))) {
 						debug_error(
 								"Failed to find sdo%d on slave%d master%d\n", j,
 								i, master->master_index);
-						return -1;
+						goto free_sdo_entrys;
 					}
 					if ((xml_config_sdo(&sdo_entrys[j], sdo_node))) {
 						debug_error(
 								"Failed to config sdo%d on slave%d master%d\n",
 								j, i, master->master_index);
-						return -1;
+						goto free_sdo_entrys;
 					}
 				}
 				slave->ns_sdo_entry = sdo_entrys;
@@ -543,7 +543,7 @@ static int xml_create_new_slaves(xmlNode * master_node, nser_master *master) {
 			debug_error(
 					"  Failed to find SyncManagers node on slave%d master%d\n",
 					i, master->master_index);
-			return -1;
+			goto free_sdo_entrys;
 		}
 
 		if ((ret = get_attr_force_pdo_assign(syncs_node)) < 0) {
@@ -558,7 +558,7 @@ static int xml_create_new_slaves(xmlNode * master_node, nser_master *master) {
 			debug_error(
 					"Failed to find the number of SyncManager node on slave%d master%d\n",
 					i, master->master_index);
-			return -1;
+			goto free_sdo_entrys;
 		}
 
 		if (!(sync_info = malloc(
@@ -567,7 +567,7 @@ static int xml_create_new_slaves(xmlNode * master_node, nser_master *master) {
 			debug_error(
 					"Failed to malloc memory to sync_info on slave%d master%d\n",
 					i, master->master_index);
-			return -1;
+			goto free_sdo_entrys;
 		}
 		slave->ns_sync_info = (nser_sync_info *) (sync_info + (syncs_num + 1));
 		slave->ns_sync_info_num = syncs_num;
@@ -578,14 +578,14 @@ static int xml_create_new_slaves(xmlNode * master_node, nser_master *master) {
 				debug_error(
 						"Failed to find SyncManager%d node on slave%d master%d\n",
 						j, i, master->master_index);
-				return -1;
+				goto free_sync_info;
 			}
 			if (xml_config_sync(slave, sync_node, &sync_info[j],
 					&slave->ns_sync_info[j])) {
 				debug_error(
 						"Failed to config SyncManager%d node on slave%d master%d\n",
 						j, i, master->master_index);
-				return -1;
+				goto free_sync_info;
 			}
 		}
 		sync_info[syncs_num].index = 0xff;
@@ -599,6 +599,14 @@ static int xml_create_new_slaves(xmlNode * master_node, nser_master *master) {
 	master->slaves = slaves;
 	master->slave_number = slaves_num;
 	return 0;
+
+free_sync_info:
+	free(sync_info);
+free_sdo_entrys:
+	free(sdo_entrys);
+free_slaves:
+	free(slaves);
+	return -1;
 }
 
 static int xml_create_new_master(xmlNode * root_element,
@@ -627,21 +635,21 @@ static int xml_create_new_master(xmlNode * root_element,
 	for (i = 0; i < num; i++) {
 		if (!(master_node = find_subnode_index(masters_node, "Master", i))) {
 			debug_error("Failed to find master%d\n", i);
-			return -1;
+			goto free_ns_master;
 		}
 		master = ns_master + i;
 
 		ret = get_subnode_value(master_node, "Master_index");
 		if (ret < 0) {
 			debug_error("Failed to get master%d Master_index\n", i);
-			return -1;
+			goto free_ns_master;
 		}
 		master->master_index = (unsigned int) ret;
 		debug_info(" Start to find slaves for master%d\n", master->master_index);
 		if (xml_create_new_slaves(master_node, master)) {
 			debug_error("Failed to create slaves for master(%d)\n",
 					master->master_index);
-			return -1;
+			goto free_ns_master;
 		}
 
 		/* Configure reference clock;*/
@@ -672,6 +680,10 @@ static int xml_create_new_master(xmlNode * root_element,
 	ns_data->ns_masteter = ns_master;
 	ns_data->num_master = num;
 	return 0;
+
+free_ns_master:
+	free(ns_master);
+	return -1;
 }
 
 static nser_slave *get_ns_slave(nser_master *ns_master, uint16_t position) {
@@ -802,7 +814,9 @@ static int xml_config_axles(xmlNode *root_element, nser_global_data *ns_data) {
 
 		mode = get_subnode_value_str(axle_node, "Mode");
 
-		if (mode[0] == 'p' && mode[1] == 'p')
+		if (mode == NULL)
+			ns_axles[axle_index].mode = op_mode_no;
+		else if (mode[0] == 'p' && mode[1] == 'p')
 			ns_axles[axle_index].mode = op_mode_pp;
 		else if (mode[0] == 'v' && mode[1] == 'l')
 			ns_axles[axle_index].mode = op_mode_vl;

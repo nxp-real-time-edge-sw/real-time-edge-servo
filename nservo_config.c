@@ -32,20 +32,24 @@ nser_global_data *nser_app_config_init(char *xmlfile) {
 		if ((nser_xmlconfig(ns_data, xmlfile))) {
 			debug_error("Failed to open xml configuration file: %s \n",
 					xmlfile);
-			return NULL;
+			goto free_ns_data;
 		}
 
 		if (nser_config_all_masters(ns_data)) {
 			debug_error("Failed to configure masters\n");
-			return NULL;
+			goto free_ns_data;
 		}
 
 		if (nser_config_all_axles(ns_data)) {
 			debug_error("Failed to configure axles\n");
-			return NULL;
+			goto free_ns_data;
 		}
 	}
 	return ns_data;
+
+free_ns_data:
+	free(ns_data);
+	return NULL;
 }
 
 int nser_app_load_xml(nser_global_data *ns_data, char *xmlfile) {

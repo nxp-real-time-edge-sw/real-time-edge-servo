@@ -25,7 +25,7 @@
 static int setscheduler(pid_t pid, int policy, const struct sched_param *param);
 uint32_t set_sdo(uint16_t index, uint8_t subindex, nser_axle *ns_axle,
 		void *data, size_t data_size) {
-	uint32_t abort_code;
+	uint32_t abort_code = 0;
 	uint16_t index_new = index + 0x800 * ns_axle->axle_offset;
 	if (ecrt_master_sdo_download(ns_axle->nser_master->ec_master,
 			ns_axle->slave->slave_position, index_new, subindex, data,
@@ -38,7 +38,7 @@ uint32_t set_sdo(uint16_t index, uint8_t subindex, nser_axle *ns_axle,
 
 uint32_t get_sdo(uint16_t index, uint8_t subindex, nser_axle *ns_axle,
 		uint8_t *target, size_t target_size, size_t *result_size) {
-	uint32_t abort_code;
+	uint32_t abort_code = 0;
 	size_t result_size_local;
 	uint16_t index_new = index + 0x800 * ns_axle->axle_offset;
 	if (!result_size)
@@ -54,7 +54,7 @@ uint32_t get_sdo(uint16_t index, uint8_t subindex, nser_axle *ns_axle,
 }
 
 float nser_sdo_get_Position_encoder_resolution(nser_axle *ns_axle) {
-	uint32_t encoder_increments, motor_resolution;
+	uint32_t encoder_increments = 0, motor_resolution = 0;
 	if (nser_sdo_get_PRE_Encoder_increments(ns_axle, &encoder_increments)) {
 		debug_error("\n");
 		return 0;
@@ -73,7 +73,7 @@ float nser_sdo_get_Position_encoder_resolution(nser_axle *ns_axle) {
 }
 
 float nser_sdo_get_Velocity_encoder_resolution(nser_axle *ns_axle) {
-	uint32_t encoder_increments_per_s, motor_resolution_per_s;
+	uint32_t encoder_increments_per_s = 0, motor_resolution_per_s = 0;
 	if (nser_sdo_get_VNR_Encoder_increments_per_second(ns_axle,
 			&encoder_increments_per_s)) {
 		debug_error("\n");
@@ -95,7 +95,7 @@ float nser_sdo_get_Velocity_encoder_resolution(nser_axle *ns_axle) {
 }
 
 float nser_sdo_get_Gear_ratio(nser_axle *ns_axle) {
-	uint32_t motor, driving;
+	uint32_t motor = 0, driving = 0;
 	if (nser_sdo_get_GR_Motor_revolutions(ns_axle, &motor)) {
 		debug_error("\n");
 		return 0;
@@ -122,7 +122,7 @@ nser_master *create_new_master(unsigned int num) {
 		return NULL;
 	}
 	ns_master->slave_number = 0;
-	ns_master->ns_master_state = UNKNOWN;
+	ns_master->ns_master_state = UN_KNOWN;
 	ns_master->reference_clock_slave = NULL;
 	return ns_master;
 }
@@ -477,7 +477,7 @@ int nser_activate_master(nser_global_data *ns_data, unsigned int master_index) {
 			for (i = 0; i < ns_data->num_master; i++) {
 				if (ns_data->ns_masteter[i].ns_master_state == ACTIVATE) {
 					ecrt_master_deactivate(ns_data->ns_masteter[i].ec_master);
-					ns_data->ns_masteter[i].ns_master_state = UNKNOWN;
+					ns_data->ns_masteter[i].ns_master_state = UN_KNOWN;
 				}
 			}
 
@@ -539,13 +539,21 @@ static void update_master_domain_states(nser_global_data *ns_data) {
 	int i;
 	ec_master_state_t master_state;
 	ec_domain_state_t domain_state;
+	domain_state.wc_state = EC_WC_ZERO;
+	master_state.slaves_responding = 0;
 	nser_master *ns_master;
 	if (!(ns_data->cycle_counter % ns_data->master_status_update_freq)) {
 		for (i = 0; i < ns_data->num_master; i++) {
 			ns_master = &ns_data->ns_masteter[i];
 			ecrt_domain_state(ns_master->domain, &domain_state);
 			ecrt_master_state(ns_master->ec_master, &master_state);
-			ns_master->ns_domain_state = domain_state.wc_state;
+			if (domain_state.wc_state == EC_WC_ZERO){
+				ns_master->ns_domain_state = ZERO;
+			} else if (domain_state.wc_state == EC_WC_INCOMPLETE){
+				ns_master->ns_domain_state = INCOMPLETE;
+			} else {
+				ns_master->ns_domain_state = COMPLETE;
+			}
 			if (master_state.slaves_responding == 0) {
 				ns_master->ns_master_state = NO_SLAVE;
 			} else {
@@ -572,6 +580,7 @@ static void nser_receive_all(nser_global_data *ns_data) {
 /*****************************************************************************/
 static void update_slave_config_states(nser_global_data *ns_data) {
 	ec_slave_config_state_t s;
+	s.al_state = 1;
 	int i, j;
 	nser_master *ns_master;
 	nser_slave *ns_slave;
@@ -581,7 +590,22 @@ static void update_slave_config_states(nser_global_data *ns_data) {
 			for (j = 0; j < ns_master->slave_number; j++) {
 				ns_slave = &ns_master->slaves[j];
 				ecrt_slave_config_state(ns_slave->sc, &s);
-				ns_slave->ns_slave_state = s.al_state;
+				if (s.al_state == 0x00){
+					ns_slave->ns_slave_state = UNKNOWN;
+				} else if (s.al_state == 0x01){
+					ns_slave->ns_slave_state = INIT;
+				} else if (s.al_state == 0x02){
+					ns_slave->ns_slave_state = PREOP;
+				} else if (s.al_state == 0x03){
+					ns_slave->ns_slave_state = BOOT;
+				}else if (s.al_state == 0x04){
+					ns_slave->ns_slave_state = SAFEOP;
+				}else if (s.al_state == 0x08){
+					ns_slave->ns_slave_state = OP;
+				}else {
+					debug_info("method update_slave_config_states s.al_state=%d\n", s.al_state);
+				}
+				
 			}
 		}
 	}
@@ -875,24 +899,28 @@ nser_global_data *nser_app_run_init(char *xmlfile) {
 	memset(ns_data, 0, sizeof(nser_global_data));
 	if ((nser_xmlconfig(ns_data, xmlfile))) {
 		debug_error("Failed to open xml configuration file: %s \n", xmlfile);
-		return NULL;
+		goto free_ns_data;
 	}
 
 	if (nser_config_all_masters(ns_data)) {
 		debug_error("Failed to configure masters\n");
-		return NULL;
+		goto free_ns_data;
 	}
 
 	if (nser_config_all_axles(ns_data)) {
 		debug_error("Failed to configure axles\n");
-		return NULL;
+		goto free_ns_data;
 	}
 
 	if (nser_activate_all_masters(ns_data)) {
 		debug_error("Failed to activate all masters\n");
-		return NULL;
+		goto free_ns_data;
 	}
 	return ns_data;
+
+free_ns_data:
+	free(ns_data);
+	return NULL;
 }
 
 nser_global_data *nser_app_run_init_without_activate(char *xmlfile) {
@@ -905,19 +933,23 @@ nser_global_data *nser_app_run_init_without_activate(char *xmlfile) {
 	memset(ns_data, 0, sizeof(nser_global_data));
 	if ((nser_xmlconfig(ns_data, xmlfile))) {
 		debug_error("Failed to open xml configuration file: %s \n", xmlfile);
-		return NULL;
+		goto free_ns_data;
 	}
 
 	if (nser_config_all_masters(ns_data)) {
 		debug_error("Failed to configure masters\n");
-		return NULL;
+		goto free_ns_data;
 	}
 
 	if (nser_config_all_axles(ns_data)) {
 		debug_error("Failed to configure axles\n");
-		return NULL;
+		goto free_ns_data;
 	}
 	return ns_data;
+
+free_ns_data:
+	free(ns_data);
+	return NULL;
 }
 
 /* Check the error status of sched_setscheduler

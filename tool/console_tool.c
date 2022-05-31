@@ -141,8 +141,8 @@ char* get_cmd() {
 				hist_index = buff_index;
 			}
 			if (col) {
-				strcpy(buff[buff_index % buff_size] + col - 1,
-						buff[buff_index % buff_size] + col);
+				strncpy(buff[buff_index % buff_size] + col - 1,
+						buff[buff_index % buff_size] + col, buff_len - col);
 				col--;
 				l--;
 			}
@@ -150,7 +150,7 @@ char* get_cmd() {
 			printf(ANSI_CURSOR_COLUMN, col + prompt_len);
 		} else if (c == '\n') {
 			if (hist_index != buff_index) {
-				strncpy(buff[buff_index % buff_size],
+				memcpy(buff[buff_index % buff_size],
 						buff[hist_index % buff_size], buff_len - 1);
 			}
 			index = buff_index % buff_size;
@@ -281,8 +281,8 @@ void start_interaction(tool_data *t_data, nser_global_data *ns_data) {
 	pdo_cmd_fun_t pdo_cmd_fun;
 	sdo_cmd_fun_t sdo_cmd_fun;
 	int axle_index;
-	uint32_t value;
-	int size;
+	uint32_t value = 0;
+	int size = 0;
 	while (1) {
 		strncpy(buf, get_cmd(), 63);
 		printf("\n");
@@ -428,7 +428,8 @@ void start_interaction(tool_data *t_data, nser_global_data *ns_data) {
 					fprintf(stderr, "Configuration xml file has been loaded\n");
 					continue;
 				}
-				if (!nser_app_load_xml(ns_data, argv[1])) {
+				char *xmlfile = argv[1];
+				if (!nser_app_load_xml(ns_data, xmlfile)) {
 					t_data->isLoadXML = 1;
 				}
 			} else if (!strncmp(argv[0], "activate", 8)) {
@@ -496,9 +497,13 @@ int main(int argc, char **argv) {
 
 	if (!(t_data = nser_config_tool_init(max_domain_size))) {
 		fprintf(stderr, "Failed to initialize tool's configuration \n");
-		return 0;
+		goto free_ns_data;
 	}
 
 	start_interaction(t_data, ns_data);
+
+free_ns_data:
+	free(ns_data);
+	return 0;
 }
 

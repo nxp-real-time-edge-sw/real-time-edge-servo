@@ -156,9 +156,10 @@ static int update_target_Position(nser_global_data *ns_data)
 int main( int argc, char **argv)
 {
 	nser_global_data *ns_data;
+	char *xmlfile = argv[1];
 	signal(SIGTERM, signal_handler);
 	signal(SIGINT, signal_handler);
-	if (!(ns_data = nser_app_run_init_without_activate(argv[1]))) {
+	if (!(ns_data = nser_app_run_init_without_activate(xmlfile))) {
 		fprintf(stderr, "Failed to initialize the App\n");
 		return 0;
 	}
