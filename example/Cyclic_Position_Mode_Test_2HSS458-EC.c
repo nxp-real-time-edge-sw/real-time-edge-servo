@@ -170,13 +170,13 @@ int main( int argc, char **argv)
 
 	if (nser_activate_all_masters(ns_data)) {
 		printf("Failed to activate all masters\n");
-		return 0;
+		goto free_ns_data;
 	}
 
 	if (user_cycle_task_start(ns_data,update_target_Position ,0))
 	{
 		fprintf(stderr, "Failed to start task\n");
-		return 0;
+		goto free_ns_data;
 	}
 
 	while (run) {
@@ -184,6 +184,10 @@ int main( int argc, char **argv)
 	}
 	user_cycle_task_stop(ns_data);
 	nser_deactivate_all_masters(ns_data);
+
+free_ns_data:
+	free(ns_data);
+	return 0;
 }
 
 
