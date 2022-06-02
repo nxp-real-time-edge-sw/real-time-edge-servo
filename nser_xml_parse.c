@@ -468,7 +468,7 @@ static int xml_create_new_slaves(xmlNode * master_node, nser_master *master) {
 		if (ret < 0) {
 			debug_error("Failed to get slave%d attr alias on master%d\n", i,
 					master->master_index);
-			goto free_slaves;
+			goto free_slave_name;
 		}
 		slave->alias = (uint32_t) ret;
 
@@ -500,7 +500,7 @@ static int xml_create_new_slaves(xmlNode * master_node, nser_master *master) {
 					debug_error(
 							"Failed to malloc memory to nser_sdo_entry on slave%d master%d\n",
 							i, master->master_index);
-					goto free_slaves;
+					goto free_slave_name;
 				}
 				for (j = 0; j < sdos_num; j++) {
 					if (!(sdo_node = find_subnode_index(sdos_node, "sdo", j))) {
@@ -604,6 +604,8 @@ free_sync_info:
 	free(sync_info);
 free_sdo_entrys:
 	free(sdo_entrys);
+free_slave_name:
+	free(slave->name);
 free_slaves:
 	free(slaves);
 	return -1;
