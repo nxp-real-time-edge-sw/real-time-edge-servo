@@ -154,6 +154,7 @@ char* get_cmd() {
 						buff[hist_index % buff_size], buff_len - 1);
 			}
 			index = buff_index % buff_size;
+			buff[buff_index % buff_size][buff_len - 1] = '\0';
 			if ((l = strlen(buff[buff_index % buff_size])) > 0)
 				buff_index++;
 			printf(ANSI_CURSOR_COLUMN, l + prompt_len);
