@@ -400,7 +400,7 @@ static int xml_create_new_slaves(xmlNode * master_node, nser_master *master) {
 	int64_t ret;
 	int i, j;
 	nser_slave *slaves, *slave;
-	nser_sdo_entry *sdo_entrys;
+	nser_sdo_entry *sdo_entrys = NULL;
 
 	if (!(slaves_num = find_node_number(master_node, "Slave"))) {
 		debug_error("Failed to the number of Slave node on master%d\n",
@@ -603,7 +603,9 @@ static int xml_create_new_slaves(xmlNode * master_node, nser_master *master) {
 free_sync_info:
 	free(sync_info);
 free_sdo_entrys:
-	free(sdo_entrys);
+	if (sdo_entrys != NULL) {
+		free(sdo_entrys);
+	}
 free_slave_name:
 	free(slave->name);
 free_slaves:
