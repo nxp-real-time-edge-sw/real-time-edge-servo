@@ -50,8 +50,7 @@ int main(int argc, char **argv) {
                                 service_port = atoi(optarg);
                                 break;
                         case 's':
-                                if (service_ip != NULL)
-                                {
+                                if (strncmp(service_ip, "127.0.0.1", strlen(service_ip))) {
                                         free(service_ip);
                                 }
                                 service_ip = strdup(optarg);
@@ -67,8 +66,7 @@ int main(int argc, char **argv) {
                                 cmd = strdup(optarg);
                                 break;
                         default:
-                                if (service_ip != NULL)
-                                {
+                                if (strncmp(service_ip, "127.0.0.1", strlen(service_ip))) {
                                         free(service_ip);
                                 }
                                 if (cmd != NULL)
@@ -116,5 +114,7 @@ int main(int argc, char **argv) {
 	}
 	close(sockfd);
         free(cmd);
-        free(service_ip);
+        if (strncmp(service_ip, "127.0.0.1", strlen(service_ip))) {
+                free(service_ip);
+        }
 }
