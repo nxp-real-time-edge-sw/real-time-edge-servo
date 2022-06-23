@@ -400,7 +400,7 @@ static int xml_create_new_slaves(xmlNode * master_node, nser_master *master) {
 	int64_t ret;
 	int i, j;
 	nser_slave *slaves, *slave;
-	nser_sdo_entry *sdo_entrys;
+	nser_sdo_entry *sdo_entrys = NULL;
 
 	if (!(slaves_num = find_node_number(master_node, "Slave"))) {
 		debug_error("Failed to the number of Slave node on master%d\n",
@@ -468,7 +468,7 @@ static int xml_create_new_slaves(xmlNode * master_node, nser_master *master) {
 		if (ret < 0) {
 			debug_error("Failed to get slave%d attr alias on master%d\n", i,
 					master->master_index);
-			goto free_slaves;
+			goto free_slave_name;
 		}
 		slave->alias = (uint32_t) ret;
 
@@ -500,7 +500,7 @@ static int xml_create_new_slaves(xmlNode * master_node, nser_master *master) {
 					debug_error(
 							"Failed to malloc memory to nser_sdo_entry on slave%d master%d\n",
 							i, master->master_index);
-					goto free_slaves;
+					goto free_slave_name;
 				}
 				for (j = 0; j < sdos_num; j++) {
 					if (!(sdo_node = find_subnode_index(sdos_node, "sdo", j))) {
@@ -603,7 +603,11 @@ static int xml_create_new_slaves(xmlNode * master_node, nser_master *master) {
 free_sync_info:
 	free(sync_info);
 free_sdo_entrys:
-	free(sdo_entrys);
+	if (sdo_entrys != NULL) {
+		free(sdo_entrys);
+	}
+free_slave_name:
+	free(slave->name);
 free_slaves:
 	free(slaves);
 	return -1;
@@ -750,34 +754,34 @@ static int xml_config_axles(xmlNode *root_element, nser_global_data *ns_data) {
 	for (i = 0; i < axles_num; i++) {
 		if (!(axle_node = find_subnode_index(axles_node, "Axle", i))) {
 			debug_error("Failed to find Axle%d node\n", i);
-			return -1;
+			goto free_ns_axles;
 		}
 
 		ret = get_attr_master_index(axle_node);
 		if (ret < 0) {
 			debug_error("Failed to get Axle%d attr master_index \n", i);
-			return -1;
+			goto free_ns_axles;
 		}
 		master_index = (unsigned int) ret;
 
 		ret = get_attr_slave_position(axle_node);
 		if (ret < 0) {
 			debug_error("Failed to get Axle%d attr slave_position \n", i);
-			return -1;
+			goto free_ns_axles;
 		}
 		slave_position = (uint16_t) ret;
 
 		ret = get_attr_AxleIndex(axle_node);
 		if (ret < 0) {
 			debug_error("Failed to get Axle%d attr AxleIndex \n", i);
-			return -1;
+			goto free_ns_axles;
 		}
 		axle_index = (unsigned int) ret;
 
 		if (axle_index > axles_num) {
 			debug_error("The axle_index %d is excess the sum of all axles",
 					axle_index);
-			return -1;
+			goto free_ns_axles;
 		}
 
 		ret = get_attr_AxleOffset(axle_node);
@@ -790,7 +794,7 @@ static int xml_config_axles(xmlNode *root_element, nser_global_data *ns_data) {
 			debug_error(
 					"Failed to Axle%d attr master_index is bigger then the number of master%d\n",
 					i, ns_data->num_master);
-			return -1;
+			goto free_ns_axles;
 		} debug_info(" Find axle%d on master%d slave%d bus with axle_offset=%d\n",
 				axle_index, master_index, slave_position, axle_offset);
 		ns_master = &(ns_data->ns_masteter[master_index]);
@@ -798,12 +802,12 @@ static int xml_config_axles(xmlNode *root_element, nser_global_data *ns_data) {
 		if (!(ns_slave = get_ns_slave(ns_master, slave_position))) {
 			debug_error("Failed to find slave for Axle%d on master%d\n", i,
 					ns_master->master_index);
-			return -1;
+			goto free_ns_axles;
 		}
 
 		if (ns_axles[axle_index].slave) {
 			debug_error("The axle_index %d has been occupied\n", axle_index);
-			return -1;
+			goto free_ns_axles;
 		}
 
 		ns_axles[axle_index].slave = ns_slave;
@@ -839,22 +843,22 @@ static int xml_config_axles(xmlNode *root_element, nser_global_data *ns_data) {
 
 		if (!(reg_pdo_num = find_node_number(axle_node, "reg_pdo"))) {
 			debug_error("Failed to get number of reg_pdo node on axle%d\n", i);
-			return -1;
+			goto free_ns_axles;
 		} debug_info(" 	axle%d find %d reg_pdo\n", axle_index, reg_pdo_num);
 		if (!(ns_info = malloc(sizeof(nser_reg_pdo_entry) * reg_pdo_num))) {
 			debug_error(
 					"Failed to malloc memory to nser_reg_pdo_entry on axle%d \n",
 					i);
-			return -1;
+			goto free_ns_axles;
 		}
 		for (j = 0; j < reg_pdo_num; j++) {
 			if (!(reg_pdo_node = find_subnode_index(axle_node, "reg_pdo", j))) {
 				debug_error("Failed to find reg_pdo%d on axle%d\n", j, i);
-				return -1;
+				goto free_ns_info;
 			}
 			if (xml_config_reg_pdo(reg_pdo_node, &ns_axles[i], &ns_info[j])) {
 				debug_error("Failed to config reg_pdo%d on axle%d\n", j, i);
-				return -1;
+				goto free_ns_info;
 			} debug_info(" 	 Register pdo(0x%x:0x%x) to axle%d \n", ns_info[j].index, ns_info[j].subindex, axle_index);
 		}
 		ns_axles[axle_index].ns_reg_pdo = ns_info;
@@ -863,6 +867,12 @@ static int xml_config_axles(xmlNode *root_element, nser_global_data *ns_data) {
 	ns_data->axle_number = axles_num;
 	ns_data->ns_axles = ns_axles;
 	return 0;
+
+free_ns_info:
+	free(ns_info);
+free_ns_axles:
+	free(ns_axles);
+	return -1;
 }
 
 static int xml_config_global_data(nser_global_data *ns_data,

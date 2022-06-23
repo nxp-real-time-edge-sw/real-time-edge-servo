@@ -154,6 +154,7 @@ char* get_cmd() {
 						buff[hist_index % buff_size], buff_len - 1);
 			}
 			index = buff_index % buff_size;
+			buff[buff_index % buff_size][buff_len - 1] = '\0';
 			if ((l = strlen(buff[buff_index % buff_size])) > 0)
 				buff_index++;
 			printf(ANSI_CURSOR_COLUMN, l + prompt_len);
@@ -175,7 +176,7 @@ char* get_cmd() {
 				if (col != l) {
 					strncpy(tmp, buff[buff_index % buff_size] + col, buff_len);
 					buff[buff_index % buff_size][col++] = c;
-					strcpy(buff[buff_index % buff_size] + col, tmp);
+					strncpy(buff[buff_index % buff_size] + col, tmp, buff_len);
 					l++;
 				} else {
 					buff[buff_index % buff_size][l++] = c;
