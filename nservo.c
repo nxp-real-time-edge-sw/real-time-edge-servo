@@ -145,6 +145,8 @@ nser_slave *create_new_slaves(unsigned int num) {
 		ns_slave[i].ns_sdo_entry_number = 0;
 		ns_slave[i].wd_divider = 0;
 		ns_slave[i].wd_intervals = 0;
+		ns_slave[i].sync_info = NULL;
+		ns_slave[i].ns_sdo_entry = NULL;
 
 	}
 	return ns_slave;
