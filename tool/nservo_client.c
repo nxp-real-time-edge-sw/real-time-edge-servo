@@ -39,7 +39,7 @@ int main(int argc, char **argv) {
 	char buffer[256];
 	int sockfd, len;
 	struct sockaddr_in servaddr;
-	char *service_ip = "127.0.0.1";
+	char *service_ip = strdup("127.0.0.1");
 	int service_port = PORT;
 	int axle = 0;
 	char *cmd = NULL;
@@ -50,9 +50,7 @@ int main(int argc, char **argv) {
                                 service_port = atoi(optarg);
                                 break;
                         case 's':
-                                if (strncmp(service_ip, "127.0.0.1", strlen(service_ip))) {
-                                        free(service_ip);
-                                }
+                                free(service_ip);
                                 service_ip = strdup(optarg);
                                 break;
                         case 'a':
@@ -66,9 +64,7 @@ int main(int argc, char **argv) {
                                 cmd = strdup(optarg);
                                 break;
                         default:
-                                if (strncmp(service_ip, "127.0.0.1", strlen(service_ip))) {
-                                        free(service_ip);
-                                }
+                                free(service_ip);
                                 if (cmd != NULL)
                                 {
                                         free(cmd);
@@ -114,7 +110,5 @@ int main(int argc, char **argv) {
 	}
 	close(sockfd);
         free(cmd);
-        if (strncmp(service_ip, "127.0.0.1", strlen(service_ip))) {
-                free(service_ip);
-        }
+        free(service_ip);
 }

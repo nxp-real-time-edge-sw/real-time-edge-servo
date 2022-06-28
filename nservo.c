@@ -145,6 +145,8 @@ nser_slave *create_new_slaves(unsigned int num) {
 		ns_slave[i].ns_sdo_entry_number = 0;
 		ns_slave[i].wd_divider = 0;
 		ns_slave[i].wd_intervals = 0;
+		ns_slave[i].sync_info = NULL;
+		ns_slave[i].ns_sdo_entry = NULL;
 
 	}
 	return ns_slave;
@@ -904,20 +906,22 @@ nser_global_data *nser_app_run_init(char *xmlfile) {
 
 	if (nser_config_all_masters(ns_data)) {
 		debug_error("Failed to configure masters\n");
-		goto free_ns_data;
+		goto free_ns_axles;
 	}
 
 	if (nser_config_all_axles(ns_data)) {
 		debug_error("Failed to configure axles\n");
-		goto free_ns_data;
+		goto free_ns_axles;
 	}
 
 	if (nser_activate_all_masters(ns_data)) {
 		debug_error("Failed to activate all masters\n");
-		goto free_ns_data;
+		goto free_ns_axles;
 	}
 	return ns_data;
 
+free_ns_axles:
+	free(ns_data->ns_axles);
 free_ns_data:
 	free(ns_data);
 	return NULL;
@@ -938,15 +942,17 @@ nser_global_data *nser_app_run_init_without_activate(char *xmlfile) {
 
 	if (nser_config_all_masters(ns_data)) {
 		debug_error("Failed to configure masters\n");
-		goto free_ns_data;
+		goto free_ns_axles;
 	}
 
 	if (nser_config_all_axles(ns_data)) {
 		debug_error("Failed to configure axles\n");
-		goto free_ns_data;
+		goto free_ns_axles;
 	}
 	return ns_data;
 
+free_ns_axles:
+	free(ns_data->ns_axles);
 free_ns_data:
 	free(ns_data);
 	return NULL;

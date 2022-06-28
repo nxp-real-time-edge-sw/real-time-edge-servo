@@ -420,7 +420,7 @@ static int xml_create_new_slaves(xmlNode * master_node, nser_master *master) {
 		if (!(slave_node = find_subnode_index(master_node, "slave", i))) {
 			debug_error("Failed to find slave%d on master%d\n", i,
 					master->master_index);
-			goto free_slaves;
+			goto free_faild;
 		}
 		/*Get slave's position, vendorId, produceID and alias*/
 		ret = get_attr_slave_position(slave_node);
@@ -428,7 +428,7 @@ static int xml_create_new_slaves(xmlNode * master_node, nser_master *master) {
 			debug_error(
 					"Failed to get slave%d attr slave_position on master%d\n",
 					i, master->master_index);
-			goto free_slaves;
+			goto free_faild;
 		}
 		slave = &slaves[(uint16_t) ret];
 		slave->slave_position = (uint16_t) ret;
@@ -443,14 +443,14 @@ static int xml_create_new_slaves(xmlNode * master_node, nser_master *master) {
 			debug_error(
 					"The position of slave%d has been occupied on master%d\n",
 					i, master->master_index);
-			goto free_slaves;
+			goto free_faild;
 		}
 
 		ret = get_subnode_value(slave_node, "VendorId");
 		if (ret < 0) {
 			debug_error("Failed to get slave%d VendorId on master%d\n", i,
 					master->master_index);
-			goto free_slaves;
+			goto free_faild;
 		}
 		slave->VendorId = (uint32_t) ret;
 
@@ -458,7 +458,7 @@ static int xml_create_new_slaves(xmlNode * master_node, nser_master *master) {
 		if (ret < 0) {
 			debug_error("Failed to get slave%d ProductCode on master%d\n", i,
 					master->master_index);
-			goto free_slaves;
+			goto free_faild;
 		}
 		slave->ProductCode = (uint32_t) ret;
 
@@ -468,7 +468,7 @@ static int xml_create_new_slaves(xmlNode * master_node, nser_master *master) {
 		if (ret < 0) {
 			debug_error("Failed to get slave%d attr alias on master%d\n", i,
 					master->master_index);
-			goto free_slave_name;
+			goto free_faild;
 		}
 		slave->alias = (uint32_t) ret;
 
@@ -500,20 +500,20 @@ static int xml_create_new_slaves(xmlNode * master_node, nser_master *master) {
 					debug_error(
 							"Failed to malloc memory to nser_sdo_entry on slave%d master%d\n",
 							i, master->master_index);
-					goto free_slave_name;
+					goto free_faild;
 				}
 				for (j = 0; j < sdos_num; j++) {
 					if (!(sdo_node = find_subnode_index(sdos_node, "sdo", j))) {
 						debug_error(
 								"Failed to find sdo%d on slave%d master%d\n", j,
 								i, master->master_index);
-						goto free_sdo_entrys;
+						goto free_faild;
 					}
 					if ((xml_config_sdo(&sdo_entrys[j], sdo_node))) {
 						debug_error(
 								"Failed to config sdo%d on slave%d master%d\n",
 								j, i, master->master_index);
-						goto free_sdo_entrys;
+						goto free_faild;
 					}
 				}
 				slave->ns_sdo_entry = sdo_entrys;
@@ -543,7 +543,7 @@ static int xml_create_new_slaves(xmlNode * master_node, nser_master *master) {
 			debug_error(
 					"  Failed to find SyncManagers node on slave%d master%d\n",
 					i, master->master_index);
-			goto free_sdo_entrys;
+			goto free_faild;
 		}
 
 		if ((ret = get_attr_force_pdo_assign(syncs_node)) < 0) {
@@ -558,7 +558,7 @@ static int xml_create_new_slaves(xmlNode * master_node, nser_master *master) {
 			debug_error(
 					"Failed to find the number of SyncManager node on slave%d master%d\n",
 					i, master->master_index);
-			goto free_sdo_entrys;
+			goto free_faild;
 		}
 
 		if (!(sync_info = malloc(
@@ -567,7 +567,7 @@ static int xml_create_new_slaves(xmlNode * master_node, nser_master *master) {
 			debug_error(
 					"Failed to malloc memory to sync_info on slave%d master%d\n",
 					i, master->master_index);
-			goto free_sdo_entrys;
+			goto free_faild;
 		}
 		slave->ns_sync_info = (nser_sync_info *) (sync_info + (syncs_num + 1));
 		slave->ns_sync_info_num = syncs_num;
@@ -578,14 +578,14 @@ static int xml_create_new_slaves(xmlNode * master_node, nser_master *master) {
 				debug_error(
 						"Failed to find SyncManager%d node on slave%d master%d\n",
 						j, i, master->master_index);
-				goto free_sync_info;
+				goto free_faild;
 			}
 			if (xml_config_sync(slave, sync_node, &sync_info[j],
 					&slave->ns_sync_info[j])) {
 				debug_error(
 						"Failed to config SyncManager%d node on slave%d master%d\n",
 						j, i, master->master_index);
-				goto free_sync_info;
+				goto free_faild;
 			}
 		}
 		sync_info[syncs_num].index = 0xff;
@@ -600,15 +600,16 @@ static int xml_create_new_slaves(xmlNode * master_node, nser_master *master) {
 	master->slave_number = slaves_num;
 	return 0;
 
-free_sync_info:
-	free(sync_info);
-free_sdo_entrys:
-	if (sdo_entrys != NULL) {
-		free(sdo_entrys);
+free_faild:
+	for (i = 0; i < slaves_num; i++) {
+		slave = &slaves[i];
+		if (slave->sync_info)
+			free(slave->sync_info);
+		if (slave->ns_sdo_entry)
+			free(slave->ns_sdo_entry);
+		if (slave->name)
+			free(slave->name);
 	}
-free_slave_name:
-	free(slave->name);
-free_slaves:
 	free(slaves);
 	return -1;
 }
@@ -686,6 +687,22 @@ static int xml_create_new_master(xmlNode * root_element,
 	return 0;
 
 free_ns_master:
+	for (i = 0; i < num; i++) {
+		master = ns_master + i;
+		for (j = 0; j < master->slave_number; j++) {
+			nser_slave *slave = &master->slaves[j];
+			if (slave->sync_info){
+				free(slave->sync_info);
+			}
+			if (slave->ns_sdo_entry){
+				free(slave->ns_sdo_entry);
+			}
+			if (slave->name){
+				free(slave->name);
+			}
+		}
+		free(master->slaves);
+	}
 	free(ns_master);
 	return -1;
 }

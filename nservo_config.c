@@ -37,16 +37,18 @@ nser_global_data *nser_app_config_init(char *xmlfile) {
 
 		if (nser_config_all_masters(ns_data)) {
 			debug_error("Failed to configure masters\n");
-			goto free_ns_data;
+			goto free_ns_axles;
 		}
 
 		if (nser_config_all_axles(ns_data)) {
 			debug_error("Failed to configure axles\n");
-			goto free_ns_data;
+			goto free_ns_axles;
 		}
 	}
 	return ns_data;
 
+free_ns_axles:
+	free(ns_data->ns_axles);
 free_ns_data:
 	free(ns_data);
 	return NULL;
