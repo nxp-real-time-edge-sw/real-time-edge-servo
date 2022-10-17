@@ -37,7 +37,7 @@ CFLAGS +=  $(shell $(PKG_CONFIG) libxml-2.0 --cflags)
 LDFLAGS += $(shell $(PKG_CONFIG) libxml-2.0 --libs)
 
 CFLAGS += -I./include -Ddebug_level=debug_level_info
-LDFLAGS += -lpthread
+LDFLAGS += -lpthread -lm
 
 lib = libnservo.a
 
