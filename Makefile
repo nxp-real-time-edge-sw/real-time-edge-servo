@@ -74,7 +74,13 @@ install:
 	install -m 664 example/hss248_ec_config_pv.xml  $(DESTDIR)$(HOME_DIR)/nservo_example
 	install -m 664 example/x3e_config.xml  $(DESTDIR)$(HOME_DIR)/nservo_example
 	install -m 664 example/Delta-ASDA-B3-two-masters.xml  $(DESTDIR)$(HOME_DIR)/nservo_example
-
+	install -m 664 example/Delta-ASDA-B3-csp.xml  $(DESTDIR)$(HOME_DIR)/nservo_example
+	install -m 664 example/Delta-ASDA-B3-pp.xml  $(DESTDIR)$(HOME_DIR)/nservo_example
+	install -m 664 example/Delta-ASDA-B3-pv.xml  $(DESTDIR)$(HOME_DIR)/nservo_example
+	install -m 664 example/Delta-ASDA-B3-tp_arrays  $(DESTDIR)$(HOME_DIR)/nservo_example
+	install -m 664 example/x6b_sv680_delta_axis.xml $(DESTDIR)$(HOME_DIR)/nservo_example
+	install -m 664 example/x6b_sv680_delta_tp_arrays $(DESTDIR)$(HOME_DIR)/nservo_example
+	install -m 664 example/x3e_csp_60_config.xml $(DESTDIR)$(HOME_DIR)/nservo_example
 clean:
 	rm *.o *.a
 %.o:%.c
