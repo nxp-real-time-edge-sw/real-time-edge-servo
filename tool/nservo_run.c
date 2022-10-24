@@ -282,6 +282,9 @@ static int Tp_arrays_paster(struct axis_status_t *axis_status, char *tp_str, uin
 	}
 	p = tp_arrays;
 	while (1) {
+		if (p == NULL) {
+			break;
+		}
 		if ((p = strchr(p, '(')) == NULL)
 			break;
 		n++;
