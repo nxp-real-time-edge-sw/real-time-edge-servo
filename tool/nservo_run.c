@@ -479,9 +479,10 @@ int command_parse(char *command, nser_global_data *ns_data, struct axis_status_t
 	char *p_colon = NULL;
 	char *s_colon = NULL;
 	int32_t value = 0;
-	char buf[256];
+	char buf[256] = {'\0'};
 	int axis = 0;
-	int len, i;
+	int len = 0;
+	int i;
 	FILE *stream;
 	char *line = NULL;
 	int l;
