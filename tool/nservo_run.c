@@ -282,6 +282,9 @@ static int Tp_arrays_paster(struct axis_status_t *axis_status, char *tp_str, uin
 	}
 	p = tp_arrays;
 	while (1) {
+		if (p == NULL) {
+			break;
+		}
 		if ((p = strchr(p, '(')) == NULL)
 			break;
 		n++;
@@ -479,10 +482,11 @@ int command_parse(char *command, nser_global_data *ns_data, struct axis_status_t
 	char *p_colon = NULL;
 	char *s_colon = NULL;
 	int32_t value = 0;
-	char buf[256];
+	char buf[256] = {'\0'};
 	int axis = 0;
-	int len, i;
-	FILE *stream;
+	int len = 0;
+	int i;
+	FILE *stream = NULL;
 	char *line = NULL;
 	int l;
 	int ret;
@@ -727,6 +731,9 @@ int command_parse(char *command, nser_global_data *ns_data, struct axis_status_t
 	}
 send:
 	send(sock, buf, len, 0);
+	if (stream) {
+		free(stream);
+	}
 	return 0;
 }
 
@@ -877,6 +884,10 @@ int main(int argc, char **argv)
 		}
 	}
 
+	if (p) {
+		free(p);
+	}
+
 	if (!(p = calloc(sizeof(struct axis_pv_status_t),  axis_pv_num))) {
 		fprintf(stderr, "Failed to malloc memory  for axle_pv_status\n");
 		goto destroy_master;
@@ -960,6 +971,9 @@ int main(int argc, char **argv)
 	
 destroy_master:
 	nser_deactivate_all_masters(ns_data);
+	if (p) {
+		free(p);
+	}
 close_tcp:
 	close(sockfd);
 	free(ns_data);
