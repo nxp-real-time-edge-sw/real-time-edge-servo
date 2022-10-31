@@ -732,7 +732,7 @@ int command_parse(char *command, nser_global_data *ns_data, struct axis_status_t
 send:
 	send(sock, buf, len, 0);
 	if (stream) {
-		free(stream);
+		fclose(stream);
 	}
 	return 0;
 }
@@ -869,6 +869,10 @@ int main(int argc, char **argv)
 		if ( axis_status[i].mode == op_mode_csp ) {
 			axis_status[i].axis_status = &((struct axis_csp_status_t*)p)[axis_csp_num++];
 		}
+	}
+
+	if (p) {
+		free(p);
 	}
 
 	if (!(p = calloc(sizeof(struct axis_pp_status_t),  axis_pp_num))) {
