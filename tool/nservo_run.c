@@ -732,7 +732,7 @@ int command_parse(char *command, nser_global_data *ns_data, struct axis_status_t
 send:
 	send(sock, buf, len, 0);
 	if (stream) {
-		free(stream);
+		fclose(stream);
 	}
 	return 0;
 }
