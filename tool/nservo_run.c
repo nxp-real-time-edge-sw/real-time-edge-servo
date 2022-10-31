@@ -871,6 +871,10 @@ int main(int argc, char **argv)
 		}
 	}
 
+	if (p) {
+		free(p);
+	}
+
 	if (!(p = calloc(sizeof(struct axis_pp_status_t),  axis_pp_num))) {
 		fprintf(stderr, "Failed to malloc memory  for axle_pp_status\n");
 		goto destroy_master;
