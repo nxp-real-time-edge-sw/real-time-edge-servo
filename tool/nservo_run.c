@@ -857,8 +857,10 @@ int main(int argc, char **argv)
 		axis_status[i].mode = ns_data->ns_axles[i].mode;
 	}
 
-	void *p;
-	if (!(p = calloc(sizeof(struct axis_csp_status_t),  axis_csp_num))) {
+	void *p_csp = NULL;
+	void *p_pp = NULL;
+	void *p_pv = NULL;
+	if (!(p_csp = calloc(sizeof(struct axis_csp_status_t),  axis_csp_num))) {
 		fprintf(stderr, "Failed to malloc memory  for axle_csp_status\n");
 		goto destroy_master;
 	}
@@ -867,15 +869,11 @@ int main(int argc, char **argv)
 	for (i = 0; i < ns_data->axle_number; i++)
 	{
 		if ( axis_status[i].mode == op_mode_csp ) {
-			axis_status[i].axis_status = &((struct axis_csp_status_t*)p)[axis_csp_num++];
+			axis_status[i].axis_status = &((struct axis_csp_status_t*)p_csp)[axis_csp_num++];
 		}
 	}
 
-	if (p) {
-		free(p);
-	}
-
-	if (!(p = calloc(sizeof(struct axis_pp_status_t),  axis_pp_num))) {
+	if (!(p_pp = calloc(sizeof(struct axis_pp_status_t),  axis_pp_num))) {
 		fprintf(stderr, "Failed to malloc memory  for axle_pp_status\n");
 		goto destroy_master;
 	}
@@ -884,15 +882,11 @@ int main(int argc, char **argv)
 	for (i = 0; i < ns_data->axle_number; i++)
 	{
 		if ( axis_status[i].mode == op_mode_pp ) {
-			axis_status[i].axis_status = &((struct axis_pp_status_t*)p)[axis_pp_num++];
+			axis_status[i].axis_status = &((struct axis_pp_status_t*)p_pp)[axis_pp_num++];
 		}
 	}
 
-	if (p) {
-		free(p);
-	}
-
-	if (!(p = calloc(sizeof(struct axis_pv_status_t),  axis_pv_num))) {
+	if (!(p_pv = calloc(sizeof(struct axis_pv_status_t),  axis_pv_num))) {
 		fprintf(stderr, "Failed to malloc memory  for axle_pv_status\n");
 		goto destroy_master;
 	}
@@ -901,7 +895,7 @@ int main(int argc, char **argv)
 	for (i = 0; i < ns_data->axle_number; i++)
 	{
 		if ( axis_status[i].mode == op_mode_pv ) {
-			axis_status[i].axis_status = &((struct axis_pp_status_t*)p)[axis_pv_num++];
+			axis_status[i].axis_status = &((struct axis_pp_status_t*)p_pv)[axis_pv_num++];
 		}
 	}
 
@@ -975,9 +969,16 @@ int main(int argc, char **argv)
 	
 destroy_master:
 	nser_deactivate_all_masters(ns_data);
-	if (p) {
-		free(p);
+	if (p_csp) {
+		free(p_csp);
 	}
+	if (p_pp) {
+                free(p_pp);
+        }
+	if (p_pv) {
+                free(p_pv);
+        }
+
 close_tcp:
 	close(sockfd);
 	free(ns_data);
