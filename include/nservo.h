@@ -164,8 +164,6 @@ struct _nser_global_data {
 	unsigned int axle_number;
 	uint32_t period_time;
 	pthread_t cyclic_thread;
-	int sched_priority;
-	int sched_policy;
 	int running;
 	nser_cycle_task_t task;
 	void *private_data;

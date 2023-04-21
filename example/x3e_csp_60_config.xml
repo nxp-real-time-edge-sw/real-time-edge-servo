@@ -11,8 +11,6 @@
 	<slave_status_update_freq>#4</slave_status_update_freq>
 	<axle_status_update_freq>#4</axle_status_update_freq>
 	<sync_ref_update_freq>#1</sync_ref_update_freq>
-	<sched_priority>#90</sched_priority>
-	<sched_policy>SCHED_FIFO</sched_policy>
 	<Masters>
 		<Master>
 			<Master_index>#0</Master_index>

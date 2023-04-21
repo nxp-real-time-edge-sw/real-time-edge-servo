@@ -22,7 +22,6 @@
 #include "nser_pdo.h"
 #include "nser_sdo.h"
 /****************************************************************************/
-static int setscheduler(pid_t pid, int policy, const struct sched_param *param);
 uint32_t set_sdo(uint16_t index, uint8_t subindex, nser_axle *ns_axle,
 		void *data, size_t data_size) {
 	uint32_t abort_code = 0;
@@ -762,10 +761,6 @@ static void *cycle_task(void *data) {
 	struct timespec wakeup_time;
 	struct timespec cycletime;
 	struct timespec start_time;
-	struct sched_param param;
-	memset(&param, 0, sizeof(param));
-	param.sched_priority = ns_data->sched_priority;
-	setscheduler(0, ns_data->sched_policy, &param);
 	debug_info("Starting cycle task with dt=%u ns.\n", ns_data->period_time);
 	set_low_latency();
 	cycletime.tv_nsec = ns_data->period_time;
@@ -812,48 +807,6 @@ static void *cycle_task(void *data) {
 	}
 	stop_low_latency();
 	return NULL;
-}
-static int raise_soft_prio(int policy, const struct sched_param *param)
-{
-        int err;
-        int policy_max; /* max for scheduling policy such as SCHED_FIFO */
-        int soft_max;
-        int hard_max;
-        int prio;
-        struct rlimit rlim;
-
-        prio = param->sched_priority;
-
-        policy_max = sched_get_priority_max(policy);
-        if (policy_max == -1) {
-                err = errno;
-                debug_info("WARN: no such policy\n");
-                return err;
-        }
-
-        err = getrlimit(RLIMIT_RTPRIO, &rlim);
-        if (err) {
-                err = errno;
-                debug_info("WARN: getrlimit failed");
-                return err;
-        }
-
-        soft_max = (rlim.rlim_cur == RLIM_INFINITY) ? policy_max : rlim.rlim_cur;
-        hard_max = (rlim.rlim_max == RLIM_INFINITY) ? policy_max : rlim.rlim_max;
-
-        if (prio > soft_max && prio <= hard_max) {
-                rlim.rlim_cur = prio;
-                err = setrlimit(RLIMIT_RTPRIO, &rlim);
-                if (err) {
-                        err = errno;
-                        debug_info("WARN: setrlimit failed");
-                        /* return err; */
-                }
-        } else {
-                err = -1;
-        }
-
-        return err;
 }
 
 /****************************************************************************/
@@ -958,24 +911,3 @@ free_ns_data:
 	return NULL;
 }
 
-/* Check the error status of sched_setscheduler
- * If an error can be corrected by raising the soft limit priority to
- * a priority less than or equal to the hard limit, then do so.
- */
-static int setscheduler(pid_t pid, int policy, const struct sched_param *param)
-{
-        int err = 0;
-
-try_again:
-        err = sched_setscheduler(pid, policy, param);
-        if (err) {
-                err = errno;
-                if (err == EPERM) {
-                        int err1;
-                        err1 = raise_soft_prio(policy, param);
-                        if (!err1) goto try_again;
-                }
-        }
-
-        return err;
-}

@@ -928,24 +928,6 @@ static int xml_config_global_data(nser_global_data *ns_data,
 	} else
 		ns_data->sync_ref_update_freq = (int) ret;
 
-	ret = get_subnode_value(root_element, "sched_priority");
-	if (ret < 0) {
-		ns_data->sched_priority = 82;
-	} else
-		ns_data->sched_priority = (int) ret;
-
-	char *policy = get_subnode_value_str(root_element, "sched_policy");
-	if (!policy) {
-		ns_data->sched_policy = SCHED_OTHER;
-	} else if ( !strncmp(policy, "SCHED_FIFO", 10)) {
-		ns_data->sched_policy = SCHED_FIFO;
-	} else if ( !strncmp(policy, "SCHED_RR", 8)) {
-		ns_data->sched_policy = SCHED_RR;
-	}else {
-		debug_error("Unknown sched_policy: %s\n", policy);
-		return -1;
-	}
-
 	if ((xml_create_new_master(root_element, ns_data))) {
 		debug_error("Failed to creat new master\n");
 		return -1;
