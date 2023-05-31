@@ -755,6 +755,9 @@ int main(int argc, char **argv)
 	int service_port = PORT;
 	char *conf_file_name = NULL;
 	int axis_csp_num, axis_pp_num, axis_pv_num;
+    void *p_csp = NULL;
+    void *p_pp = NULL;
+    void *p_pv = NULL;
 
 //	  daemon(0, 0);
 	while ((c = getopt(argc, argv, "f:p:")) != -1) {
@@ -857,9 +860,6 @@ int main(int argc, char **argv)
 		axis_status[i].mode = ns_data->ns_axles[i].mode;
 	}
 
-	void *p_csp = NULL;
-	void *p_pp = NULL;
-	void *p_pv = NULL;
 	if (!(p_csp = calloc(sizeof(struct axis_csp_status_t),  axis_csp_num))) {
 		fprintf(stderr, "Failed to malloc memory  for axle_csp_status\n");
 		goto destroy_master;
