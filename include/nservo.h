@@ -35,10 +35,23 @@ uint32_t get_sdo(uint16_t index, uint8_t subindex, nser_axle *ns_axle,
 float nser_sdo_get_Position_encoder_resolution(nser_axle *ns_axle);
 float nser_sdo_get_Velocity_encoder_resolution(nser_axle *ns_axle);
 float nser_sdo_get_Gear_ratio(nser_axle *ns_axle);
+int ecrt_slave_config_emerg_size(ec_slave_config_t *sc, size_t elements);
 
 nser_master *create_new_master(unsigned int num);
 nser_slave *create_new_slaves(unsigned int num);
 nser_axle * create_new_axles(unsigned int num);
+
+#ifdef EC_MASTER_IN_USERSPACE
+int ecus_init(uint32_t master_count, const char *const *master_macs,
+              uint32_t backup_count, const char *const *backup_macs,
+              uint32_t dbg_level, uint32_t cycle_ns, uint32_t core_mask);
+int ecus_done(void);
+
+int ecus_slave_is_ready(uint32_t master_index, uint16_t alias, uint16_t position);
+int ecus_master_operation_loop(ec_master_t *master, int cycle);
+
+int ecus_bind_cpu_core(uint32_t core_mask);
+#endif
 
 typedef enum {
 	ZERO = 0, /**< No registered process data were exchanged. */

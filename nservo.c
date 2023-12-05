@@ -21,6 +21,7 @@
 #include "nservo.h"
 #include "nser_pdo.h"
 #include "nser_sdo.h"
+
 /****************************************************************************/
 uint32_t set_sdo(uint16_t index, uint8_t subindex, nser_axle *ns_axle,
 		void *data, size_t data_size) {
@@ -515,6 +516,12 @@ int nser_activate_master(nser_global_data *ns_data, unsigned int master_index) {
 void nser_deactivate_master(nser_global_data *ns_data,
 		unsigned int master_index) {
 	int i;
+
+#ifdef EC_MASTER_IN_USERSPACE
+	ecus_done();
+	return;
+#endif
+
 	if (master_index == 0xff) {
 		for (i = 0; i < ns_data->num_master; i++) {
 			if (ns_data->ns_masteter[i].ns_master_state != UN_KNOWN) {
@@ -761,6 +768,11 @@ static void *cycle_task(void *data) {
 	struct timespec wakeup_time;
 	struct timespec cycletime;
 	struct timespec start_time;
+
+#ifdef EC_MASTER_IN_USERSPACE
+	ecus_bind_cpu_core(EC_BIND_CORE_MASK);
+#endif
+
 	debug_info("Starting cycle task with dt=%u ns.\n", ns_data->period_time);
 	set_low_latency();
 	cycletime.tv_nsec = ns_data->period_time;
@@ -794,7 +806,6 @@ static void *cycle_task(void *data) {
 				ns_data->is_auto_start = 0;
 			}
 		}
-		running = (*task)(ns_data);
 		for (i = 0; i < ns_data->num_master; i++){
 			ecrt_master_application_time(ns_data->ns_masteter[i].ec_master,
 					TIMESPEC2NS(start_time));
@@ -802,7 +813,18 @@ static void *cycle_task(void *data) {
 					ns_data->ns_masteter[i].ec_master);
 			ecrt_master_sync_slave_clocks(ns_data->ns_masteter[i].ec_master);
 		}
+#ifdef EC_MASTER_IN_USERSPACE
+		for (i = 0; i < ns_data->num_master; i++)
+			ecus_master_operation_loop(ns_data->ns_masteter[i].ec_master, 1);
+#endif
+		running = (*task)(ns_data);
+
 		nser_send_all(ns_data);
+
+#ifdef EC_MASTER_IN_USERSPACE
+		for (i = 0; i < ns_data->num_master; i++)
+			ecus_master_operation_loop(ns_data->ns_masteter[i].ec_master, 0);
+#endif
 		ns_data->cycle_counter++;
 	}
 	stop_low_latency();
@@ -844,9 +866,59 @@ void user_cycle_task_stop(nser_global_data *ns_data) {
 	pthread_join(ns_data->cyclic_thread, NULL);
 }
 
-nser_global_data *nser_app_run_init(char *xmlfile) {
+#ifdef EC_MASTER_IN_USERSPACE
+static int is_all_slaves_ready(nser_global_data *ns_data)
+{
+	nser_master *ns_master = NULL;
+	nser_slave *ns_slave = NULL;
+	int ready = 0;
+	int i = 0;
+	int j = 0;
 
+	for (i = 0; i < ns_data->num_master; i++) {
+		ns_master = ns_data->ns_masteter + i;
+
+		for (j = 0; j < ns_master->slave_number; j++) {
+			ns_slave = ns_master->slaves + j;
+
+			ready = ecus_slave_is_ready(i, ns_slave->alias, ns_slave->slave_position);
+			if (!ready)
+				return 0;
+		}
+	}
+
+	return 1;
+}
+
+static int ec_user_space_init(nser_global_data *ns_data)
+{
+	char *master_macs[1] = {"04:13:07:02:00:13"};
+	int sec = 0;
+	int ret = 0;
+
+	ret = ecus_init(1, (const char**)master_macs, 0, NULL, 0, ns_data->period_time, EC_BIND_CORE_MASK);
+	if (ret) {
+		debug_error("Failed to init userspace EtherCAT! %s.\n", strerror(-ret));
+		return ret;
+	}
+
+	printf("waiting for slaves ");
+	for (sec = 0; sec < 60; sec++) {
+		if (is_all_slaves_ready(ns_data)) {
+			printf("\nAll slaves are ready, sec:%d\n", sec);
+			break;
+		}
+		printf(".");
+		sleep(1);
+	}
+
+	return 0;
+}
+#endif
+
+nser_global_data *nser_app_run_init(char *xmlfile) {
 	nser_global_data *ns_data;
+
 	if (!(ns_data = malloc(sizeof(nser_global_data)))) {
 		debug_error("Failed to malloc global data\n");
 		return NULL;
@@ -856,6 +928,11 @@ nser_global_data *nser_app_run_init(char *xmlfile) {
 		debug_error("Failed to open xml configuration file: %s \n", xmlfile);
 		goto free_ns_data;
 	}
+
+#ifdef EC_MASTER_IN_USERSPACE
+	if (ec_user_space_init(ns_data))
+		goto free_ns_data;
+#endif
 
 	if (nser_config_all_masters(ns_data)) {
 		debug_error("Failed to configure masters\n");

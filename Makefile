@@ -36,8 +36,9 @@ endif
 CFLAGS +=  $(shell $(PKG_CONFIG) libxml-2.0 --cflags)
 LDFLAGS += $(shell $(PKG_CONFIG) libxml-2.0 --libs)
 
-CFLAGS += -I./include -Ddebug_level=debug_level_info
+CFLAGS += -I./include -Ddebug_level=debug_level_info -DEC_MASTER_IN_USERSPACE -DEC_BIND_CORE_MASK=0x02
 LDFLAGS += -lpthread -lm
+ECAT_LIB = ethercat_master
 
 lib = libnservo.a
 
@@ -46,15 +47,15 @@ all:lib console_tool nservo_run pv_example pp_example csp_example nservo_client
 lib: $(obj)
 	$(AR) -cr $(lib) $^
 console_tool: $(console_tool_obj) lib
-	$(CC) $< -o nser_console_tool -L. -lnservo -lethercat -lpthread $(LDFLAGS)  
+	$(CC) $< -o nser_console_tool -L. -lnservo -l$(ECAT_LIB) -lpthread $(LDFLAGS)
 pv_example: $(pv_example_obj) lib
-	$(CC) $< -o pv_2hss458 -lnservo -L. -lethercat -lpthread $(LDFLAGS)
+	$(CC) $< -o pv_2hss458 -lnservo -L. -l$(ECAT_LIB) -lpthread $(LDFLAGS)
 pp_example: $(pp_example_obj) lib
-	$(CC) $< -o pp_2hss458 -lnservo -L. -lethercat -lpthread $(LDFLAGS)
+	$(CC) $< -o pp_2hss458 -lnservo -L. -l$(ECAT_LIB) -lpthread $(LDFLAGS)
 csp_example: $(csp_example_obj) lib
-	$(CC) $< -o csp_2hss458 -lnservo -L. -lethercat -lpthread $(LDFLAGS) 
+	$(CC) $< -o csp_2hss458 -lnservo -L. -l$(ECAT_LIB) -lpthread $(LDFLAGS)
 nservo_run:  $(nservo_run_obj) lib
-	$(CC) $< -o nservo_run -lnservo -L. -lethercat -lpthread $(LDFLAGS) 
+	$(CC) $< -o nservo_run -lnservo -L. -l$(ECAT_LIB) -lpthread $(LDFLAGS)
 nservo_client:  $(nservo_client_obj) lib
 	$(CC) $< -o nservo_client $(LDFLAGS)  
 
@@ -82,7 +83,7 @@ install:
 	install -m 664 example/x6b_sv680_delta_tp_arrays $(DESTDIR)$(HOME_DIR)/nservo_example
 	install -m 664 example/x3e_csp_60_config.xml $(DESTDIR)$(HOME_DIR)/nservo_example
 clean:
-	rm *.o *.a
+	rm *.o $(lib)
 %.o:%.c
 	$(CC)	-c $(CFLAGS)  -Wall -g   $< -o $@
 #-Wfatal-errors -Werror $(CC)  -shared $(LDFLAGS) -o libnservo.so $< $(CC)  -fpic  -shared $(LDFLAGS) -o libnservo.so $<
