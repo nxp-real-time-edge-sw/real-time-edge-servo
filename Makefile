@@ -47,7 +47,7 @@ all:lib console_tool nservo_run pv_example pp_example csp_example nservo_client
 lib: $(obj)
 	$(AR) -cr $(lib) $^
 console_tool: $(console_tool_obj) lib
-	$(CC) $< -o nser_console_tool -L. -lnservo -l$(ECAT_LIB) -lpthread $(LDFLAGS)
+	$(CC) $< -o userspace_nser_console_tool -L. -lnservo -l$(ECAT_LIB) -lpthread $(LDFLAGS)
 pv_example: $(pv_example_obj) lib
 	$(CC) $< -o pv_2hss458 -lnservo -L. -l$(ECAT_LIB) -lpthread $(LDFLAGS)
 pp_example: $(pp_example_obj) lib
@@ -55,9 +55,9 @@ pp_example: $(pp_example_obj) lib
 csp_example: $(csp_example_obj) lib
 	$(CC) $< -o csp_2hss458 -lnservo -L. -l$(ECAT_LIB) -lpthread $(LDFLAGS)
 nservo_run:  $(nservo_run_obj) lib
-	$(CC) $< -o nservo_run -lnservo -L. -l$(ECAT_LIB) -lpthread $(LDFLAGS)
+	$(CC) $< -o userspace_nservo_run -lnservo -L. -l$(ECAT_LIB) -lpthread $(LDFLAGS)
 nservo_client:  $(nservo_client_obj) lib
-	$(CC) $< -o nservo_client $(LDFLAGS)  
+	$(CC) $< -o userspace_nservo_client $(LDFLAGS)
 
 install-libs:
 	install -d -m 755 $(DESTDIR)$(includedir)
@@ -68,9 +68,9 @@ install-libs:
 install:
 	install -d -m 755 $(DESTDIR)$(execdir)
 	install -d -m 755 $(DESTDIR)$(HOME_DIR)/nservo_example
-	install -m 755 nservo_run $(DESTDIR)$(execdir)
-	install -m 755 nservo_client $(DESTDIR)$(execdir)
-	install -m 755 nser_console_tool  $(DESTDIR)$(execdir)
+	install -m 755 userspace_nservo_run $(DESTDIR)$(execdir)
+	install -m 755 userspace_nservo_client $(DESTDIR)$(execdir)
+	install -m 755 userspace_nser_console_tool  $(DESTDIR)$(execdir)
 	install -m 664 example/hss248_ec_config_pp.xml  $(DESTDIR)$(HOME_DIR)/nservo_example
 	install -m 664 example/hss248_ec_config_pv.xml  $(DESTDIR)$(HOME_DIR)/nservo_example
 	install -m 664 example/x3e_config.xml  $(DESTDIR)$(HOME_DIR)/nservo_example
