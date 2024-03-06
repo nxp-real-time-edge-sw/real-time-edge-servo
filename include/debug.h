@@ -7,13 +7,13 @@
 #define __DEBUG____H_____
 #include <stdio.h>
 #include <stdarg.h>
-#define debug_level_info	3
-#define debug_level_warning 	2
-#define debug_level_error	1
-#define debug_level_none	0
+#define DEBUG_LEVEL_INFO	3
+#define DEBUG_LEVEL_WARNING 	2
+#define DEBUG_LEVEL_ERROR	1
+#define DEBUG_LEVEL_NONE	0
 
-#ifndef debug_level
-#define debug_level  debug_level_error
+#ifndef DEBUG_LEVEL
+#define DEBUG_LEVEL  DEBUG_LEVEL_ERROR
 #endif
 
 #define do_debug_info(fmt, args ...) do \
@@ -31,15 +31,15 @@
 		__FILE__, __func__, __LINE__, ##args);} \
 		while(0)
 
-#if (debug_level >= debug_level_info)
+#if (DEBUG_LEVEL >= DEBUG_LEVEL_INFO)
 #define debug_info(fmt, args...)  do_debug_info(fmt, ##args)
 #define debug_warning(fmt, args...)  do_debug_warning(fmt, ##args)
 #define debug_error(fmt, args...)  do_debug_error(fmt, ##args)
-#elif (debug_level >= debug_level_warning)
+#elif (DEBUG_LEVEL >= DEBUG_LEVEL_WARNING)
 #define debug_info(fmt, ...)
 #define debug_warning(fmt, args...)  do_debug_warning(fmt, ##args)
 #define debug_error(fmt, args...)  do_debug_error(fmt, ##args)
-#elif (debug_level >= debug_level_error)
+#elif (DEBUG_LEVEL >= DEBUG_LEVEL_ERROR)
 #define debug_info(fmt, ...)
 #define debug_warning(fmt, ...)
 #define debug_error(fmt, args...)  do_debug_error(fmt, ##args)
